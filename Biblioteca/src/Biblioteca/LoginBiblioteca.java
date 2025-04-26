@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 public class LoginBiblioteca extends JFrame {
 
@@ -25,7 +26,6 @@ public class LoginBiblioteca extends JFrame {
 
         getContentPane().setBackground(Color.WHITE);
 
-        // Panel superior
         JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.CENTER));
         panelSuperior.setBackground(new Color(0, 123, 255));
 
@@ -34,7 +34,6 @@ public class LoginBiblioteca extends JFrame {
         lblTitulo.setForeground(Color.WHITE);
         panelSuperior.add(lblTitulo);
 
-        // Panel de contenido
         JPanel panelCentro = crearPanelRedondeado(new GridBagLayout());
         panelCentro.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -72,7 +71,6 @@ public class LoginBiblioteca extends JFrame {
         gbc.gridx = 1; gbc.gridy = 2;
         panelCentro.add(lblOlvidaste, gbc);
 
-        // Panel inferior
         JPanel panelInferior = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.setBackground(new Color(135, 206, 235));
 
@@ -88,15 +86,13 @@ public class LoginBiblioteca extends JFrame {
         panelInferior.add(btnRegistrar);
         panelInferior.add(btnSalir);
 
-        // Agregar paneles al frame
         add(panelSuperior, BorderLayout.NORTH);
         add(panelCentro, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
-        // Acciones
         btnLogin.addActionListener(e -> {
-            String correo = txtCorreo.getText();
-            String contraseña = new String(txtPassword.getPassword());
+            String correo = txtCorreo.getText().trim();
+            String contraseña = new String(txtPassword.getPassword()).trim();
 
             if (correo.isEmpty() || contraseña.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -105,9 +101,20 @@ public class LoginBiblioteca extends JFrame {
 
             AutentificarUsuario auth = new AutentificarUsuario();
             if (auth.validarUsuario(correo, contraseña)) {
-                JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
-                // new MenuPrincipal().setVisible(true);
-                // setVisible(false);
+                String rol = obtenerRolUsuario(correo);
+                if (rol != null) {
+                    if (rol.equalsIgnoreCase("Secretario")) {
+                        JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
+                        new PanelSecretario(correo).setVisible(true);
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(this,
+                            "Inicio de sesión exitoso.\nRol '" + rol + "' aún no está implementado.",
+                            "Información", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se pudo determinar el rol del usuario.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -155,7 +162,26 @@ public class LoginBiblioteca extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    private String obtenerRolUsuario(String correo) {
+        String rol = null;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 "SELECT R.NombreRol FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = ?")) {
+
+            stmt.setString(1, correo);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                rol = rs.getString("NombreRol");
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al obtener el rol del usuario:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return rol;
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginBiblioteca().setVisible(true));
     }
-}
+} 

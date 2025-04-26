@@ -53,14 +53,16 @@ public class EditarLibro extends JDialog {
         }
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "UPDATE Libros SET titulo = ?, autor = ?, anio = ?, stock = ? WHERE id = ?";
+            String sql = "UPDATE Libros SET titulo = ?, autor = ?, anio = ?, stock = ?, disponible = ? WHERE id = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, titulo);
             stmt.setString(2, autor);
             stmt.setInt(3, anio);
             stmt.setInt(4, stock);
-            stmt.setInt(5, libroId);
+            stmt.setInt(5, stock == 0 ? 0 : 1); // disponible será 0 si stock es 0, sino 1
+            stmt.setInt(6, libroId);
             stmt.executeUpdate();
+
             JOptionPane.showMessageDialog(this, "Libro actualizado correctamente");
             dispose();
         } catch (SQLException ex) {

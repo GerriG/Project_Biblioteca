@@ -1,0 +1,1 @@
+SELECT R.NombreRol FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = 'carlos.ramirez@correo.com'
