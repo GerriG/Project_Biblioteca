@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/PanelSecretario.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/BuscarLibro.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/DatabaseConnection.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/LoginBiblioteca.java</file>
@@ -10,6 +11,7 @@
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/AgregarLibro.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/GestionarLibros.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/EliminarLibro.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/ConsultarPrestamos.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/EditarLibro.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/Registrar.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/RecuperarContrasena.java</file>
