@@ -107,14 +107,17 @@ public class LoginBiblioteca extends JFrame {
                         JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
                         new PanelSecretario(correo).setVisible(true);
                         dispose();
+                    } else if (rol.equalsIgnoreCase("Administrador")) {
+                        JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
+                        new PanelAdministrador(correo).setVisible(true);
+                        dispose();
                     } else {
                         JOptionPane.showMessageDialog(this,
-                            "Inicio de sesión exitoso.\nRol '" + rol + "' aún no está implementado.",
-                            "Información", JOptionPane.INFORMATION_MESSAGE);
+                                "Inicio de sesión exitoso.\nRol '" + rol + "' aún no está implementado.",
+                                "Información", JOptionPane.INFORMATION_MESSAGE);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se pudo determinar el rol del usuario.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+
             } else {
                 JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
             }

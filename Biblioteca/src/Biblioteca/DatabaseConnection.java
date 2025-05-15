@@ -14,7 +14,7 @@ public class DatabaseConnection {
         try {
             // Intentar establecer la conexión con SQL Server
             Connection connection = DriverManager.getConnection(URL);
-            System.out.println("✅ Conexión exitosa a SQL Server");
+            
             return connection;
         } catch (SQLException e) {
             // Si ocurre un error, se captura y se imprime el mensaje
