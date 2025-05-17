@@ -22,6 +22,8 @@ CREATE TABLE Usuarios (
     Contrasenia VARCHAR(100) NOT NULL,
     RolId INT,
     FOREIGN KEY (RolId) REFERENCES Roles(Id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 GO
 
@@ -31,8 +33,7 @@ VALUES
     ('Administrador'),
     ('Secretario'),
     ('Usuario'),
-    ('Bibliotecario'),
-    ('Invitado');
+    ('Bibliotecario');
 GO
 
 -- Insert Usuarios
@@ -44,7 +45,7 @@ VALUES
     ('Elena', 'Martínez', 'Colombiana', 'Femenino', 'elena.martinez@correo.com', 'pass3', 3),
     ('Jorge', 'Gómez', 'Argentino', 'Masculino', 'jorge.gomez@correo.com', 'pass4', 4);
 GO
-select * from Usuarios
+
 -- Tabla Libros
 CREATE TABLE Libros (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -74,6 +75,8 @@ CREATE TABLE Inventario (
     FechaAdquisicion DATE NOT NULL,
     Estado VARCHAR(50) DEFAULT 'Disponible',
     FOREIGN KEY (LibroId) REFERENCES Libros(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 GO
 
@@ -95,9 +98,20 @@ CREATE TABLE Prestamos (
     FechaHoraPrestamo DATETIME DEFAULT GETDATE(),
     FechaDevolucion DATETIME,
     UsuarioId INT NOT NULL,
-    FOREIGN KEY (LibroId) REFERENCES Libros(id),
-    FOREIGN KEY (CodigoCopia) REFERENCES Inventario(CodigoCopia),
-    FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+    FOREIGN KEY (LibroId) REFERENCES Libros(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE    
+);
+GO
+
+--Tabla Devoluciones
+CREATE TABLE Devoluciones (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    PrestamoId INT NOT NULL,
+    FechaRealDevolucion DATETIME NOT NULL,
+    FOREIGN KEY (PrestamoId) REFERENCES Prestamos(Id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 GO
 
@@ -109,8 +123,18 @@ VALUES
     (3, 'LIB003-A', 4),
     (4, 'LIB004-A', 5),
     (5, 'LIB005-A', 2);
-GO
-select * from Prestamos
+	Go
+
+-- Insert Devoluciones
+INSERT INTO Devoluciones (PrestamoId, FechaRealDevolucion)
+VALUES 
+    (1, '2025-05-01'),
+    (2, '2025-05-01'),
+    (3, '2025-05-15'),
+    (4, '2025-05-01'),
+    (5, '2025-05-01');
+	Go
+
 -- Trigger para calcular FechaDevolucion automáticamente
 CREATE TRIGGER TR_Prestamos_FechaDevolucion
 ON Prestamos

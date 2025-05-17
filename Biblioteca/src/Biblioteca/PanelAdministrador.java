@@ -75,7 +75,21 @@ public class PanelAdministrador extends JFrame {
         estiloBoton(btnGenerarReportes);
         estiloBoton(btnGestionarPersonal);
 
-        
+        btnGestionarUsuarios.addActionListener(e -> {
+//            new GestionarUsuarios().setVisible(true);
+        });
+
+        btnPrestamosDevoluciones.addActionListener(e -> {
+//            new GestionarPrestamos().setVisible(true);
+        });
+
+        btnGenerarReportes.addActionListener(e -> {
+            new GenerarReportes().setVisible(true);
+        });
+
+        btnGestionarPersonal.addActionListener(e -> {
+            new GestionarPersonal().setVisible(true);
+        });
 
         panelContenido.add(btnGestionarUsuarios);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
