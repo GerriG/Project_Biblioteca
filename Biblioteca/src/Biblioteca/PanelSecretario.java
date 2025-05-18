@@ -34,7 +34,7 @@ class RoundedPanel extends JPanel {
 public class PanelSecretario extends JFrame {
 
     private JLabel lblAvatar, lblNombre, lblDatos;
-    private JButton btnGestionarLibros, btnConsultarPrestamos;
+    private JButton btnGestionarLibros, btnConsultarPrestamos, btnPrestamosDevoluciones;
     private String correoUsuario;
     private Image fondo;
 
@@ -94,21 +94,21 @@ public class PanelSecretario extends JFrame {
         // Botones
         btnGestionarLibros = new JButton("📚 Gestionar Libros");
         btnConsultarPrestamos = new JButton("🔍 Consultar Préstamos");
+        btnPrestamosDevoluciones = new JButton("📖 Préstamos y Devoluciones");
 
         estiloBoton(btnGestionarLibros);
         estiloBoton(btnConsultarPrestamos);
+        estiloBoton(btnPrestamosDevoluciones);
 
-        btnGestionarLibros.addActionListener(e -> {
-            new GestionarLibros().setVisible(true);
-        });
-
-        btnConsultarPrestamos.addActionListener(e -> {
-            new ConsultarPrestamos().setVisible(true);
-        });
+        btnGestionarLibros.addActionListener(e -> new GestionarLibros().setVisible(true));
+        btnConsultarPrestamos.addActionListener(e -> new ConsultarPrestamos().setVisible(true));
+        btnPrestamosDevoluciones.addActionListener(e -> new ConsultarPrestamos().setVisible(true)); // Ajustar según clase correspondiente
 
         panelContenido.add(btnGestionarLibros);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
         panelContenido.add(btnConsultarPrestamos);
+        panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelContenido.add(btnPrestamosDevoluciones);
 
         panelPrincipal.add(panelContenido);
         setContentPane(panelPrincipal);
@@ -150,7 +150,7 @@ public class PanelSecretario extends JFrame {
     }
 
     private void estiloBoton(JButton boton) {
-        boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15)); // PLAIN quita la negrita
+        boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
         boton.setFocusPainted(false);
         boton.setBackground(new Color(0, 123, 255));
         boton.setForeground(Color.WHITE);

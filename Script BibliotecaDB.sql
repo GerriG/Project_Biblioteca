@@ -135,6 +135,146 @@ VALUES
     (5, '2025-05-01');
 	Go
 
+--SP Insertar Usuario
+CREATE PROCEDURE sp_InsertarUsuario
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(50),
+    @Nacionalidad VARCHAR(50),
+    @Sexo VARCHAR(10),
+    @Correo VARCHAR(100),
+    @Contrasenia VARCHAR(100),
+    @RolId INT
+AS
+BEGIN
+    INSERT INTO Usuarios (Nombre, Apellido, Nacionalidad, Sexo, Correo, Contrasenia, RolId)
+    VALUES (@Nombre, @Apellido, @Nacionalidad, @Sexo, @Correo, @Contrasenia, @RolId);
+END;
+GO
+
+--SP Actualizar Usuario
+CREATE PROCEDURE sp_ActualizarUsuario
+    @Id INT,
+    @Nombre NVARCHAR(100),
+    @Apellido NVARCHAR(100),
+    @Nacionalidad NVARCHAR(100),
+    @Correo NVARCHAR(100)
+AS
+BEGIN
+    UPDATE Usuarios
+    SET Nombre = @Nombre,
+        Apellido = @Apellido,
+        Nacionalidad = @Nacionalidad,
+        Correo = @Correo
+    WHERE Id = @Id;
+END;
+
+GO
+
+--Eliminar Usuario
+CREATE PROCEDURE sp_EliminarUsuario
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Usuarios
+    WHERE Id = @Id;
+END;
+GO
+
+--Obtener Usuario por ID
+CREATE PROCEDURE sp_ObtenerUsuarioPorId
+    @Id INT
+AS
+BEGIN
+    SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Sexo, U.Correo, U.Contrasenia, R.NombreRol, U.RolId
+    FROM Usuarios U
+    INNER JOIN Roles R ON U.RolId = R.Id
+    WHERE U.Id = @Id;
+END;
+GO
+
+-- Obtener préstamos con filtro de usuario (nombre, apellido o correo)
+Create PROCEDURE sp_ObtenerPrestamosPorUsuario
+    @Filtro NVARCHAR(100)
+AS
+BEGIN
+    SELECT 
+        p.Id,
+        l.Titulo,
+        i.CodigoCopia AS CodigoCopia,
+        u.Nombre + ' ' + u.Apellido AS Usuario,
+        p.FechaHoraPrestamo,
+        p.FechaDevolucion,
+        d.FechaRealDevolucion
+    FROM Prestamos p
+    INNER JOIN Inventario i ON p.CodigoCopia = i.CodigoCopia
+    INNER JOIN Libros l ON p.LibroId = l.Id
+    INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+    LEFT JOIN Devoluciones d ON p.Id = d.PrestamoId
+    WHERE u.Nombre LIKE '%' + @Filtro + '%'
+       OR u.Apellido LIKE '%' + @Filtro + '%'
+       OR u.Correo LIKE '%' + @Filtro + '%'
+    ORDER BY p.FechaHoraPrestamo DESC
+END;
+GO
+
+-- Registrar un Prestamo
+CREATE PROCEDURE sp_InsertarPrestamo
+    @LibroId INT,
+    @CodigoCopia VARCHAR(50),
+    @UsuarioId INT
+AS
+BEGIN
+    INSERT INTO Prestamos (LibroId, CodigoCopia, UsuarioId)
+    VALUES (@LibroId, @CodigoCopia, @UsuarioId);
+
+    UPDATE Inventario
+    SET Estado = 'Prestado'
+    WHERE CodigoCopia = @CodigoCopia;
+END;
+GO
+
+--Actualizar Prestamo
+CREATE PROCEDURE sp_ActualizarPrestamo
+    @Id INT,
+    @LibroId INT,
+    @CodigoCopia VARCHAR(50),
+    @UsuarioId INT
+AS
+BEGIN
+    UPDATE Prestamos
+    SET LibroId = @LibroId,
+        CodigoCopia = @CodigoCopia,
+        UsuarioId = @UsuarioId
+    WHERE Id = @Id;
+END;
+GO
+
+-- Procesar devolución
+Create PROCEDURE sp_ProcesarDevolucion
+    @PrestamoId INT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Devoluciones WHERE PrestamoId = @PrestamoId)
+    BEGIN
+        RAISERROR('Este préstamo ya ha sido devuelto.', 16, 1);
+        RETURN;
+    END
+
+    INSERT INTO Devoluciones (PrestamoId, FechaRealDevolucion)
+    VALUES (@PrestamoId, GETDATE());
+
+    DECLARE @CodigoCopia VARCHAR(50)
+    SELECT @CodigoCopia = CodigoCopia FROM Prestamos WHERE Id = @PrestamoId;
+
+    UPDATE Inventario SET Estado = 'Disponible'
+    WHERE CodigoCopia = @CodigoCopia;
+END
+
+GO
+
+
+
+
 -- Trigger para calcular FechaDevolucion automáticamente
 CREATE TRIGGER TR_Prestamos_FechaDevolucion
 ON Prestamos
@@ -145,3 +285,5 @@ BEGIN
     SET FechaDevolucion = DATEADD(week, 2, FechaHoraPrestamo)
     WHERE Id IN (SELECT Id FROM inserted);
 END;
+
+select * from Devoluciones

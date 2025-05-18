@@ -8,7 +8,7 @@ import java.sql.*;
 public class PanelAdministrador extends JFrame {
 
     private JLabel lblAvatar, lblNombre, lblDatos;
-    private JButton btnGestionarUsuarios, btnPrestamosDevoluciones, btnGenerarReportes, btnGestionarPersonal;
+    private JButton btnGestionarUsuarios, btnGenerarReportes, btnGestionarPersonal;
     private String correoUsuario;
     private Image fondo;
 
@@ -66,34 +66,18 @@ public class PanelAdministrador extends JFrame {
 
         // Botones
         btnGestionarUsuarios = new JButton("👥 Gestionar Usuarios");
-        btnPrestamosDevoluciones = new JButton("📖 Préstamos y Devoluciones");
         btnGenerarReportes = new JButton("📊 Generar Reportes");
         btnGestionarPersonal = new JButton("🛠 Gestionar Personal");
 
         estiloBoton(btnGestionarUsuarios);
-        estiloBoton(btnPrestamosDevoluciones);
         estiloBoton(btnGenerarReportes);
         estiloBoton(btnGestionarPersonal);
 
-        btnGestionarUsuarios.addActionListener(e -> {
-//            new GestionarUsuarios().setVisible(true);
-        });
-
-        btnPrestamosDevoluciones.addActionListener(e -> {
-//            new GestionarPrestamos().setVisible(true);
-        });
-
-        btnGenerarReportes.addActionListener(e -> {
-            new GenerarReportes().setVisible(true);
-        });
-
-        btnGestionarPersonal.addActionListener(e -> {
-            new GestionarPersonal().setVisible(true);
-        });
+        btnGestionarUsuarios.addActionListener(e -> new GestionarUsuarios().setVisible(true));
+        btnGenerarReportes.addActionListener(e -> new GenerarReportes().setVisible(true));
+        btnGestionarPersonal.addActionListener(e -> new GestionarPersonal().setVisible(true));
 
         panelContenido.add(btnGestionarUsuarios);
-        panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
-        panelContenido.add(btnPrestamosDevoluciones);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
         panelContenido.add(btnGenerarReportes);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -141,7 +125,7 @@ public class PanelAdministrador extends JFrame {
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
         boton.setFocusPainted(false);
-        boton.setBackground(new Color(40, 167, 69)); // Verde Bootstrap
+        boton.setBackground(new Color(40, 167, 69));
         boton.setForeground(Color.WHITE);
         boton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));

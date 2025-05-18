@@ -6,15 +6,23 @@
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/PanelAdministrador.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/LoginBiblioteca.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/AutentificarUsuario.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/MantenimientoPersonal.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/ReportePDF.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/MantenimientoUsuario.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/GestionarLibros.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/EditarLibro.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/Registrar.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/ProcesarPrestamos.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/GestionarPersonal.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/GestionarUsuarios.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/PanelSecretario.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/BuscarLibro.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/GenerarReportes.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/DatabaseConnection.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/AgregarLibro.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/EliminarLibro.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/ConsultarPrestamos.java</file>
+            <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/MantenimientoPrestamos.java</file>
             <file>file:/C:/Users/gerry/Documents/NetBeansProjects/Login/src/Biblioteca/RecuperarContrasena.java</file>
         </group>
     </open-files>

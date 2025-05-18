@@ -8,15 +8,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.sql.*;
 
-public class GestionarPersonal extends JFrame {
+public class GestionarUsuarios extends JFrame {
 
-    private JTable tablaPersonal;
+    private JTable tablaUsuarios;
     private DefaultTableModel modeloTabla;
     private JScrollPane scrollPane;
     private JButton btnAgregar, btnEditar, btnEliminar, btnActualizar;
 
-    public GestionarPersonal() {
-        setTitle("👥 Gestión de Personal");
+    public GestionarUsuarios() {
+        setTitle("👤 Gestión de Usuarios");
         setSize(900, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -26,22 +26,22 @@ public class GestionarPersonal extends JFrame {
         JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.setBackground(new Color(0, 123, 255));
 
-        JLabel titulo = new JLabel("👥 Personal Activo (Administrador, Secretario, Bibliotecario)");
+        JLabel titulo = new JLabel("👤 Usuarios Registrados");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 16));
         panelSuperior.add(titulo);
 
-        modeloTabla = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Nacionalidad", "Correo", "Rol"}, 0);
-        tablaPersonal = new JTable(modeloTabla);
-        tablaPersonal.setRowHeight(25);
-        tablaPersonal.setFont(new Font("Noto Color Emoji", Font.PLAIN, 13));
-        tablaPersonal.getTableHeader().setFont(new Font("Noto Color Emoji", Font.BOLD, 14));
-        tablaPersonal.getTableHeader().setBackground(new Color(100, 149, 237));
-        tablaPersonal.getTableHeader().setForeground(Color.WHITE);
-        tablaPersonal.setBackground(Color.WHITE);
+        modeloTabla = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Nacionalidad", "Correo"}, 0);
+        tablaUsuarios = new JTable(modeloTabla);
+        tablaUsuarios.setRowHeight(25);
+        tablaUsuarios.setFont(new Font("Noto Color Emoji", Font.PLAIN, 13));
+        tablaUsuarios.getTableHeader().setFont(new Font("Noto Color Emoji", Font.BOLD, 14));
+        tablaUsuarios.getTableHeader().setBackground(new Color(100, 149, 237));
+        tablaUsuarios.getTableHeader().setForeground(Color.WHITE);
+        tablaUsuarios.setBackground(Color.WHITE);
         centrarContenidoTabla();
 
-        scrollPane = new JScrollPane(tablaPersonal);
+        scrollPane = new JScrollPane(tablaUsuarios);
         scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         scrollPane.getViewport().setBackground(Color.WHITE);
         scrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
@@ -73,43 +73,44 @@ public class GestionarPersonal extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
-        cargarPersonal();
+        cargarUsuarios();
 
-        btnActualizar.addActionListener(e -> cargarPersonal());
+        btnActualizar.addActionListener(e -> cargarUsuarios());
 
         btnAgregar.addActionListener(e -> {
-            new MantenimientoPersonal(this, null).setVisible(true);
+            new MantenimientoUsuario(this, null).setVisible(true);
         });
 
         btnEditar.addActionListener(e -> {
-            int fila = tablaPersonal.getSelectedRow();
+            int fila = tablaUsuarios.getSelectedRow();
             if (fila != -1) {
                 int id = (int) modeloTabla.getValueAt(fila, 0);
-                new MantenimientoPersonal(this, id).setVisible(true);
+                new MantenimientoUsuario(this, id).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Selecciona un usuario para editar.");
             }
         });
 
         btnEliminar.addActionListener(e -> {
-            int fila = tablaPersonal.getSelectedRow();
-            if (fila != -1) {
-                int id = (int) modeloTabla.getValueAt(fila, 0);
-                new MantenimientoPersonal(this, id, true).setVisible(true); // true = modo eliminar
-            } else {
-                JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar.");
-            }
-        });
+    int fila = tablaUsuarios.getSelectedRow();
+    if (fila != -1) {
+        int id = (int) modeloTabla.getValueAt(fila, 0);
+        new MantenimientoUsuario(this, id, true).setVisible(false); // true = modo eliminar
+    } else {
+        JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar.");
+    }
+});
+
 
         setVisible(true);
     }
 
-    public void cargarPersonal() {
+    public void cargarUsuarios() {
         modeloTabla.setRowCount(0);
-        String query = "SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Correo, R.NombreRol " +
+        String query = "SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Correo " +
                        "FROM Usuarios U INNER JOIN Roles R ON U.RolId = R.Id " +
-                       "WHERE R.NombreRol IN ('Administrador', 'Secretario', 'Bibliotecario') " +
-                       "ORDER BY R.NombreRol, U.Apellido";
+                       "WHERE R.NombreRol = 'Usuario' " +
+                       "ORDER BY U.Apellido";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -121,12 +122,11 @@ public class GestionarPersonal extends JFrame {
                         rs.getString("Nombre"),
                         rs.getString("Apellido"),
                         rs.getString("Nacionalidad"),
-                        rs.getString("Correo"),
-                        rs.getString("NombreRol")
+                        rs.getString("Correo")
                 });
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar el personal:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error al cargar los usuarios:\n" + e.getMessage());
         }
     }
 
@@ -163,11 +163,12 @@ public class GestionarPersonal extends JFrame {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);
         for (int i = 0; i < modeloTabla.getColumnCount(); i++) {
-            tablaPersonal.getColumnModel().getColumn(i).setCellRenderer(centrado);
+            tablaUsuarios.getColumnModel().getColumn(i).setCellRenderer(centrado);
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GestionarPersonal::new);
+        SwingUtilities.invokeLater(GestionarUsuarios::new);
     }
 }
+
