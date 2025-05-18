@@ -21,7 +21,7 @@ public class GestionarLibros extends JFrame {
     setTitle("📚 Gestión de Libros");
     setSize(900, 500);
     setLocationRelativeTo(null);
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setLayout(new BorderLayout());
 
     // Fondo blanco para toda la ventana

@@ -39,11 +39,11 @@ GO
 -- Insert Usuarios
 INSERT INTO Usuarios (Nombre, Apellido, Nacionalidad, Sexo, Correo, Contrasenia, RolId)
 VALUES
-    ('Admin', 'Admin', 'Salvadoreño', 'Masculino', 'admin@biblioteca.com', '12345', 1),
-    ('Lucía', 'Pérez', 'Mexicana', 'Femenino', 'lucia.perez@correo.com', 'pass1', 3),
-    ('Carlos', 'Ramírez', 'Guatemalteco', 'Masculino', 'carlos.ramirez@correo.com', 'pass2', 2),
-    ('Elena', 'Martínez', 'Colombiana', 'Femenino', 'elena.martinez@correo.com', 'pass3', 3),
-    ('Jorge', 'Gómez', 'Argentino', 'Masculino', 'jorge.gomez@correo.com', 'pass4', 4);
+    ('Admin', 'Admin', 'Salvadoreño', 'Masculino', 'admin@biblioteca.com', '12345', 1), --ADMIN
+    ('Lucía', 'Pérez', 'Mexicana', 'Femenino', 'lucia.perez@correo.com', 'pass1', 3), --USUARIO
+    ('Carlos', 'Ramírez', 'Guatemalteco', 'Masculino', 'carlos.ramirez@correo.com', 'pass2', 2), --SECRETARIO
+    ('Elena', 'Martínez', 'Colombiana', 'Femenino', 'elena.martinez@correo.com', 'pass3', 3), --USUARIO
+    ('Jorge', 'Gómez', 'Argentino', 'Masculino', 'jorge.gomez@correo.com', 'pass4', 4); --Bibliotecario (Posiblemente se descarte)
 GO
 
 -- Tabla Libros
@@ -216,6 +216,26 @@ BEGIN
     ORDER BY p.FechaHoraPrestamo DESC
 END;
 GO
+
+-- Obtener todos los prestamos
+CREATE PROCEDURE sp_ObtenerTodosLosPrestamos
+AS
+BEGIN
+    SELECT 
+        p.Id,
+        l.Titulo,
+        i.CodigoCopia AS CodigoCopia,
+        u.Nombre + ' ' + u.Apellido AS Usuario,
+        p.FechaHoraPrestamo,
+        p.FechaDevolucion,
+        d.FechaRealDevolucion
+    FROM Prestamos p
+    INNER JOIN Inventario i ON p.CodigoCopia = i.CodigoCopia
+    INNER JOIN Libros l ON p.LibroId = l.Id
+    INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+    LEFT JOIN Devoluciones d ON p.Id = d.PrestamoId
+    ORDER BY p.FechaHoraPrestamo DESC
+END
 
 -- Registrar un Prestamo
 CREATE PROCEDURE sp_InsertarPrestamo

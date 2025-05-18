@@ -141,6 +141,7 @@ public class ConsultarPrestamos extends JFrame {
             }
         });
 
+        buscarPrestamosPorUsuario(); // Cargar todos los préstamos al iniciar
         setVisible(true);
     }
 
@@ -149,11 +150,20 @@ public class ConsultarPrestamos extends JFrame {
         String busqueda = campoBusqueda.getText().trim();
 
         try (Connection conn = DatabaseConnection.getConnection()) {
-            CallableStatement stmt = conn.prepareCall("{call sp_ObtenerPrestamosPorUsuario(?)}");
-            stmt.setString(1, busqueda);
-            ResultSet rs = stmt.executeQuery();
+            CallableStatement stmt;
 
+            if (busqueda.isEmpty()) {
+                // Mostrar todos los préstamos
+                stmt = conn.prepareCall("{call sp_ObtenerTodosLosPrestamos()}");
+            } else {
+                // Buscar por usuario
+                stmt = conn.prepareCall("{call sp_ObtenerPrestamosPorUsuario(?)}");
+                stmt.setString(1, busqueda);
+            }
+
+            ResultSet rs = stmt.executeQuery();
             boolean hayDatos = false;
+
             while (rs.next()) {
                 hayDatos = true;
                 Timestamp fechaPrestamo = rs.getTimestamp("FechaHoraPrestamo");
@@ -170,21 +180,24 @@ public class ConsultarPrestamos extends JFrame {
                 }
 
                 modeloTabla.addRow(new Object[]{
-                        rs.getInt("Id"),
-                        rs.getString("Titulo"),
-                        rs.getString("CodigoCopia"),
-                        rs.getString("Usuario"),
-                        fechaPrestamo,
-                        fechaDevolucion,
-                        estado
+                    rs.getInt("Id"),
+                    rs.getString("Titulo"),
+                    rs.getString("CodigoCopia"),
+                    rs.getString("Usuario"),
+                    fechaPrestamo,
+                    fechaDevolucion,
+                    estado
                 });
             }
 
-            mostrarMensajeSiTablaVacia(!hayDatos, "📭 No se encontraron préstamos para ese usuario.");
+            mostrarMensajeSiTablaVacia(!hayDatos,
+                    busqueda.isEmpty() ? "📭 No hay préstamos registrados." : "📭 No se encontraron préstamos para ese usuario.");
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error al buscar préstamos:\n" + e.getMessage());
         }
     }
+
 
     private void mostrarMensajeSiTablaVacia(boolean mostrar, String mensaje) {
         if (mostrar) {
