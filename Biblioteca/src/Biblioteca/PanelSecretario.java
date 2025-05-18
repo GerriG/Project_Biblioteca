@@ -47,7 +47,7 @@ public class PanelSecretario extends JFrame {
 
     private void initUI() {
         setTitle("Panel de Secretaria");
-        setSize(500, 600);
+        setSize(527, 700);  // Escalado desde 500x600
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -58,37 +58,37 @@ public class PanelSecretario extends JFrame {
             }
         };
         panelPrincipal.setLayout(new GridBagLayout());
-        panelPrincipal.setBorder(new EmptyBorder(20, 20, 20, 20));
+        panelPrincipal.setBorder(new EmptyBorder(23, 23, 23, 23));  // Escalado de 20
         panelPrincipal.setOpaque(false);
 
         // Panel de contenido (redondeado y semi-transparente)
         RoundedPanel panelContenido = new RoundedPanel(new Color(255, 255, 255, 204), 30);
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
-        panelContenido.setBorder(new EmptyBorder(30, 30, 30, 30));
+        panelContenido.setBorder(new EmptyBorder(35, 35, 35, 35)); // Escalado de 30
         panelContenido.setOpaque(false);
 
         // Avatar
         lblAvatar = new JLabel();
         lblAvatar.setHorizontalAlignment(SwingConstants.CENTER);
-        lblAvatar.setPreferredSize(new Dimension(150, 150));
+        lblAvatar.setPreferredSize(new Dimension(158, 175)); // Escalado de 150x150
         lblAvatar.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelContenido.add(lblAvatar);
 
         // Nombre
         lblNombre = new JLabel("Bienvenida, Secretaria");
-        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 21)); // Escalado de 20
         lblNombre.setForeground(Color.BLACK);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lblNombre.setBorder(new EmptyBorder(10, 0, 10, 0));
+        lblNombre.setBorder(new EmptyBorder(12, 0, 12, 0)); // Escalado de 10
         panelContenido.add(lblNombre);
 
         // Datos
         lblDatos = new JLabel();
-        lblDatos.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        lblDatos.setFont(new Font("Segoe UI", Font.PLAIN, 17)); // Escalado de 15
         lblDatos.setForeground(Color.BLACK);
         lblDatos.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblDatos.setHorizontalAlignment(SwingConstants.CENTER);
-        lblDatos.setBorder(new EmptyBorder(0, 0, 20, 0));
+        lblDatos.setBorder(new EmptyBorder(0, 0, 23, 0)); // Escalado de 20
         panelContenido.add(lblDatos);
 
         // Botones
@@ -102,12 +102,13 @@ public class PanelSecretario extends JFrame {
         btnPrestamosDevoluciones.addActionListener(e -> new ConsultarPrestamos().setVisible(true));
 
         panelContenido.add(btnGestionarLibros);
-        panelContenido.add(Box.createRigidArea(new Dimension(0, 10)));
+        panelContenido.add(Box.createRigidArea(new Dimension(0, 12))); // Escalado de 10
         panelContenido.add(btnPrestamosDevoluciones);
 
         panelPrincipal.add(panelContenido);
         setContentPane(panelPrincipal);
     }
+
 
     private void cargarDatosSecretaria(String correo) {
         try (Connection conn = DatabaseConnection.getConnection();

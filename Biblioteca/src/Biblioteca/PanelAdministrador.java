@@ -14,14 +14,14 @@ public class PanelAdministrador extends JFrame {
 
     public PanelAdministrador(String correoUsuario) {
         this.correoUsuario = correoUsuario;
-        fondo = new ImageIcon(getClass().getResource("/Biblioteca/Wallpaper/Fondo.jpg")).getImage();
+        fondo = new ImageIcon(getClass().getResource("/Biblioteca/Wallpaper/Admin.png")).getImage();
         initUI();
         cargarDatosAdministrador(correoUsuario);
     }
 
     private void initUI() {
         setTitle("Panel de Administrador");
-        setSize(550, 650);
+        setSize(527, 700); // Tamaño ajustado
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -35,10 +35,11 @@ public class PanelAdministrador extends JFrame {
         panelPrincipal.setBorder(new EmptyBorder(20, 20, 20, 20));
         panelPrincipal.setOpaque(false);
 
-        RoundedPanel panelContenido = new RoundedPanel(new Color(255, 255, 255, 220), 30);
+        RoundedPanel panelContenido = new RoundedPanel(new Color(255, 255, 255, 204), 30);
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.Y_AXIS));
-        panelContenido.setBorder(new EmptyBorder(30, 30, 30, 30));
+        panelContenido.setBorder(new EmptyBorder(30, 67, 30, 67)); // top, left, bottom, right
         panelContenido.setOpaque(false);
+        panelContenido.setAlignmentX(Component.CENTER_ALIGNMENT); // Centra el panel en su contenedor
 
         // Avatar
         lblAvatar = new JLabel();
@@ -86,6 +87,7 @@ public class PanelAdministrador extends JFrame {
         panelPrincipal.add(panelContenido);
         setContentPane(panelPrincipal);
     }
+
 
     private void cargarDatosAdministrador(String correo) {
         try (Connection conn = DatabaseConnection.getConnection();

@@ -192,7 +192,7 @@ public class MantenimientoUsuario extends JDialog {
             stmt.setString(4, sexo);
             stmt.setString(5, correo);
             stmt.setString(6, contrasenia);
-            stmt.setInt(7, 2);
+            stmt.setInt(7, 3);
             stmt.executeUpdate();
             mostrarMensaje("Usuario agregado correctamente.");
             dispose();
