@@ -44,9 +44,4 @@ public class DatabaseConnection {
             System.out.println("❌ No se pudo establecer la conexión.");
         }
     }
-
-//    // Método principal para probar la conexión
-//    public static void main(String[] args) {
-//        testConnection();
-//    }
 }

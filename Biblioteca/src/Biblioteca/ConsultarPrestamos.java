@@ -248,7 +248,8 @@ public class ConsultarPrestamos extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(ConsultarPrestamos::new);
-    }
+//    Testo interno
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(ConsultarPrestamos::new);
+//    }
 }

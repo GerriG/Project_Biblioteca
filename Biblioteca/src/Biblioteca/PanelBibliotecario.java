@@ -32,23 +32,23 @@ class RoundedPanel extends JPanel {
     }
 }
 
-public class PanelSecretario extends JFrame {
+public class PanelBibliotecario extends JFrame {
 
     private JLabel lblAvatar, lblNombre, lblDatos;
-    private JButton btnGestionarLibros, btnPrestamosDevoluciones, btnGestionarMora;
+    private JButton btnGestionarInventario, btnVolverLogin;
     private String correoUsuario;
     private Image fondo;
 
-    public PanelSecretario(String correoUsuario) {
+    public PanelBibliotecario(String correoUsuario) {
         this.correoUsuario = correoUsuario;
         fondo = new ImageIcon(getClass().getResource("/Biblioteca/Wallpaper/Fondo.jpg")).getImage();
         initUI();
-        cargarDatosSecretaria(correoUsuario);
+        cargarDatosBibliotecario(correoUsuario);
     }
 
     private void initUI() {
-        setTitle("Panel de Secretaria");
-        setSize(527, 700);  // Escalado desde 500x600
+        setTitle("Panel de Bibliotecario");
+        setSize(527, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -73,7 +73,7 @@ public class PanelSecretario extends JFrame {
         lblAvatar.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelContenido.add(lblAvatar);
 
-        lblNombre = new JLabel("Bienvenida, Secretaria");
+        lblNombre = new JLabel("Bienvenido, Bibliotecario");
         lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 21));
         lblNombre.setForeground(Color.BLACK);
         lblNombre.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -88,29 +88,27 @@ public class PanelSecretario extends JFrame {
         lblDatos.setBorder(new EmptyBorder(0, 0, 23, 0));
         panelContenido.add(lblDatos);
 
-        btnGestionarLibros = new JButton("📚 Gestionar Libros");
-        btnPrestamosDevoluciones = new JButton("📖 Préstamos y Devoluciones");
-        btnGestionarMora = new JButton("🧾 Gestionar Mora"); // NUEVO BOTÓN
+        btnGestionarInventario = new JButton("📦 Gestionar Inventario");
+        btnVolverLogin = new JButton("🔙 Cerrar Sesión");
 
-        estiloBoton(btnGestionarLibros);
-        estiloBoton(btnPrestamosDevoluciones);
-        estiloBoton(btnGestionarMora); // ESTILO
+        estiloBoton(btnGestionarInventario);
+        estiloBoton(btnVolverLogin);
 
-        btnGestionarLibros.addActionListener(e -> new GestionarLibros().setVisible(true));
-        btnPrestamosDevoluciones.addActionListener(e -> new ConsultarPrestamos().setVisible(true));
-        btnGestionarMora.addActionListener(e -> new GestionarMora().setVisible(true)); // ACCIÓN NUEVA
+        btnGestionarInventario.addActionListener(e -> new GestionarInventario().setVisible(true));
+        btnVolverLogin.addActionListener(e -> {
+            dispose();
+            new LoginBiblioteca().setVisible(true);
+        });
 
-        panelContenido.add(btnGestionarLibros);
+        panelContenido.add(btnGestionarInventario);
         panelContenido.add(Box.createRigidArea(new Dimension(0, 12)));
-        panelContenido.add(btnPrestamosDevoluciones);
-        panelContenido.add(Box.createRigidArea(new Dimension(0, 12)));
-        panelContenido.add(btnGestionarMora); // AÑADIDO
+        panelContenido.add(btnVolverLogin);
 
         panelPrincipal.add(panelContenido);
         setContentPane(panelPrincipal);
     }
 
-    private void cargarDatosSecretaria(String correo) {
+    private void cargarDatosBibliotecario(String correo) {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(
                 "SELECT Nombre, Apellido, Nacionalidad, Sexo, R.NombreRol FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = ?")) {
 
@@ -124,7 +122,6 @@ public class PanelSecretario extends JFrame {
                 String sexo = rs.getString("Sexo");
                 String rol = rs.getString("NombreRol");
 
-                // Avatar
                 String avatarPath = "/Biblioteca/Avatares/" + (sexo.equalsIgnoreCase("Femenino") ? "Femenino.png" : "Masculino.png");
                 ImageIcon avatarIcon = new ImageIcon(getClass().getResource(avatarPath));
                 Image avatarImg = avatarIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);

@@ -46,6 +46,7 @@ VALUES
     ('Jorge', 'Gómez', 'Argentino', 'Masculino', 'jorge.gomez@correo.com', 'pass4', 4); --Bibliotecario (Posiblemente se descarte)
 GO
 
+
 -- Tabla Libros
 CREATE TABLE Libros (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -72,8 +73,8 @@ CREATE TABLE Inventario (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     LibroId INT NOT NULL,
     CodigoCopia VARCHAR(50) UNIQUE NOT NULL,
-    FechaAdquisicion DATE NOT NULL,
-    Estado VARCHAR(50) DEFAULT 'Disponible',
+    FechaAdquisicion DATE NOT NULL DEFAULT GETDATE(),
+    Estado VARCHAR(50) CHECK (Estado IN ('Disponible', 'Prestado', 'Dañado', 'En reparación')) DEFAULT 'Disponible',
     FOREIGN KEY (LibroId) REFERENCES Libros(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
@@ -115,6 +116,35 @@ CREATE TABLE Devoluciones (
 );
 GO
 
+CREATE TABLE Multas (
+    IdMulta INT PRIMARY KEY IDENTITY(1,1),
+    IdPrestamo INT NOT NULL,
+    IdUsuario INT NOT NULL,
+    DiasRetraso INT NOT NULL,
+    Monto DECIMAL(10, 2) NOT NULL,
+    FechaMulta DATE NOT NULL DEFAULT GETDATE(),
+    Pagado BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_Multas_Prestamo FOREIGN KEY (IdPrestamo)
+        REFERENCES Prestamos(Id),
+    CONSTRAINT FK_Multas_Usuario FOREIGN KEY (IdUsuario)
+        REFERENCES Usuarios(Id),
+    CONSTRAINT CK_Multas_DiasRetraso CHECK (DiasRetraso >= 1),
+    CONSTRAINT CK_Multas_Monto CHECK (Monto >= 0)
+);
+Go
+
+-- Tabla para procesar pagos de mora
+CREATE TABLE PagoMora (
+    IdPago INT PRIMARY KEY IDENTITY(1,1),
+    IdMulta INT NOT NULL,
+    FechaPago DATE NOT NULL DEFAULT GETDATE(),
+    MontoPagado DECIMAL(10, 2) NOT NULL,
+
+    CONSTRAINT FK_PagoMora_Multa FOREIGN KEY (IdMulta)
+        REFERENCES Multas(IdMulta)
+);
+
 -- Insert Prestamos
 INSERT INTO Prestamos (LibroId, CodigoCopia, UsuarioId)
 VALUES
@@ -132,9 +162,9 @@ VALUES
     (2, '2025-05-01'),
     (3, '2025-05-15'),
     (4, '2025-05-01'),
-    (5, '2025-05-01');
+    (8, '2025-06-20');
 	Go
-
+	
 --SP Insertar Usuario
 CREATE PROCEDURE sp_InsertarUsuario
     @Nombre VARCHAR(50),
@@ -292,8 +322,211 @@ END
 
 GO
 
+--SP Historial de prestamos
+CREATE PROCEDURE sp_HistorialPrestamosUsuario
+    @Correo NVARCHAR(100)
+AS
+BEGIN
+    SELECT 
+        p.Id AS IdPrestamo,
+        l.Titulo AS Libro,
+        i.CodigoCopia,
+        p.FechaHoraPrestamo,
+        p.FechaDevolucion,
+        d.FechaRealDevolucion
+    FROM Prestamos p
+    INNER JOIN Usuarios u ON p.UsuarioId = u.Id
+    INNER JOIN Libros l ON p.LibroId = l.Id
+    INNER JOIN Inventario i ON p.CodigoCopia = i.CodigoCopia
+    LEFT JOIN Devoluciones d ON d.PrestamoId = p.Id
+    WHERE u.Correo = @Correo
+    ORDER BY p.FechaHoraPrestamo DESC
+END;
+GO
 
+--SP Cargar Info del panel Usuarios
+CREATE PROCEDURE sp_ObtenerUsuarioPorCorreo
+    @Correo NVARCHAR(100)
+AS
+BEGIN
+    SELECT Id, Nombre, Apellido, Nacionalidad, Sexo, Correo, Contrasenia, RolId
+    FROM Usuarios
+    WHERE Correo = @Correo;
+END;
+GO
 
+--SP Verificar Devolucion Prestamo
+CREATE PROCEDURE sp_VerificarDevolucion
+    @PrestamoId INT
+AS
+BEGIN
+    IF EXISTS (SELECT 1 FROM Devoluciones WHERE PrestamoId = @PrestamoId)
+        SELECT 1 AS YaDevuelto;
+    ELSE
+        SELECT 0 AS YaDevuelto;
+END;
+GO
+
+--SP Obtener Libros Disponibles (Usuarios)
+CREATE PROCEDURE sp_LibrosDisponibles
+AS
+BEGIN
+    SELECT l.id, l.titulo, l.autor, l.anio, l.disponible, l.stock
+    FROM Libros l
+    WHERE l.disponible = 1 AND l.stock > 0;
+END;
+GO
+exec sp_LibrosDisponibles
+
+select * from Libros
+
+--SP Copias disponibles de libros
+CREATE PROCEDURE sp_CopiasDisponiblesPorLibro
+    @LibroId INT
+AS
+BEGIN
+    SELECT CodigoCopia
+    FROM Inventario
+    WHERE LibroId = @LibroId AND Estado = 'Disponible';
+END;
+GO
+
+-- SP ListarInventario
+CREATE PROCEDURE sp_ObtenerInventario
+AS
+BEGIN
+    SELECT 
+        Id AS id,
+        LibroId AS id_libro,
+        CodigoCopia AS codigo_copia,
+        Estado AS estado
+    FROM Inventario
+    ORDER BY Id;
+END;
+GO
+
+-- SP Obtener Inventario mediante ID
+CREATE OR ALTER PROCEDURE sp_ObtenerInventarioPorId
+    @IdInventario INT
+AS
+BEGIN
+    SELECT 
+        i.Id AS LibroId,
+        i.CodigoCopia,
+        i.Estado,		
+        l.titulo AS TituloLibro,
+		i.FechaAdquisicion
+    FROM Inventario i
+    INNER JOIN Libros l ON i.LibroId = l.id
+    WHERE i.Id = @IdInventario;
+END;
+GO
+
+-- SP Insertar Copia de Libro
+CREATE PROCEDURE sp_InsertarInventario
+    @LibroId INT,
+    @CodigoCopia VARCHAR(50),
+    @Estado VARCHAR(50),
+    @FechaAdquisicion DATE
+AS
+BEGIN
+    INSERT INTO Inventario (LibroId, CodigoCopia, Estado, FechaAdquisicion)
+    VALUES (@LibroId, @CodigoCopia, @Estado, @FechaAdquisicion);
+
+    UPDATE Libros SET stock = stock + 1 WHERE id = @LibroId;
+END
+GO
+
+-- SP Actualizar Copia de Libro
+CREATE OR ALTER PROCEDURE sp_ActualizarInventario
+    @IdInventario INT,
+    @LibroId INT,
+    @CodigoCopia VARCHAR(50),
+    @Estado VARCHAR(50)
+AS
+BEGIN
+    UPDATE Inventario
+    SET LibroId = @LibroId,
+        CodigoCopia = @CodigoCopia,
+        Estado = @Estado
+    WHERE Id = @IdInventario;
+END
+GO
+
+-- SP Eliminar Copia de Libro
+CREATE PROCEDURE sp_EliminarInventario
+    @IdInventario INT
+AS
+BEGIN
+    DECLARE @LibroId INT;
+
+    SELECT @LibroId = LibroId
+    FROM Inventario
+    WHERE Id = @IdInventario;
+
+    DELETE FROM Inventario
+    WHERE Id = @IdInventario;
+
+    IF @LibroId IS NOT NULL
+    BEGIN
+        -- Opcional: disminuir stock al eliminar copia
+        UPDATE Libros SET stock = stock - 1 WHERE id = @LibroId;
+    END
+END;
+GO
+
+-- SP Buscar Multas por Correo
+CREATE PROCEDURE sp_MultasPorUsuario
+    @Correo NVARCHAR(100)
+AS
+BEGIN
+    SELECT 
+        l.titulo AS Titulo,
+        p.CodigoCopia,
+        m.DiasRetraso,
+        m.Monto,
+        m.FechaMulta,
+        CASE WHEN m.Pagado = 1 THEN 'Pagado' ELSE 'Pendiente' END AS Estado
+    FROM Multas m
+    INNER JOIN Usuarios u ON m.IdUsuario = u.Id
+    INNER JOIN Prestamos p ON m.IdPrestamo = p.Id
+    INNER JOIN Libros l ON p.LibroId = l.id
+    WHERE u.Correo = @Correo
+    ORDER BY m.FechaMulta DESC;
+END
+
+-- SP Obtener Multas (Secretario)
+CREATE PROCEDURE sp_ObtenerMultas
+AS
+BEGIN
+    SELECT 
+        M.IdMulta,
+        U.Nombre + ' ' + U.Apellido AS NombreUsuario,
+        M.DiasRetraso,
+        M.Monto,
+        M.FechaMulta,
+        CASE WHEN M.Pagado = 1 THEN 'Pagado' ELSE 'Pendiente' END AS Estado
+    FROM Multas M
+    INNER JOIN Usuarios U ON M.IdUsuario = U.Id
+    ORDER BY M.Pagado, M.FechaMulta;
+END
+
+-- SP Pagar Mora
+CREATE PROCEDURE sp_PagarMulta
+    @IdMulta INT
+AS
+BEGIN
+    DECLARE @Monto DECIMAL(10,2);
+
+    SELECT @Monto = Monto FROM Multas WHERE IdMulta = @IdMulta;
+
+    INSERT INTO PagoMora (IdMulta, MontoPagado)
+    VALUES (@IdMulta, @Monto);
+
+    UPDATE Multas
+    SET Pagado = 1
+    WHERE IdMulta = @IdMulta;
+END
 
 -- Trigger para calcular FechaDevolucion automáticamente
 CREATE TRIGGER TR_Prestamos_FechaDevolucion
@@ -306,4 +539,46 @@ BEGIN
     WHERE Id IN (SELECT Id FROM inserted);
 END;
 
-select * from Devoluciones
+-- Trigger calcular multas
+CREATE TRIGGER TR_CrearMulta_Devolucion
+ON Devoluciones
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IdPrestamo INT, @FechaEntrega DATE, @FechaDevolucion DATE, @IdUsuario INT;
+    DECLARE @DiasRetraso INT, @Monto DECIMAL(10,2);
+
+    SELECT 
+        @IdPrestamo = i.PrestamoId,
+        @FechaEntrega = i.FechaRealDevolucion
+    FROM INSERTED i;
+
+    SELECT 
+        @FechaDevolucion = p.FechaDevolucion,
+        @IdUsuario = p.UsuarioId
+    FROM Prestamos p
+    WHERE p.Id = @IdPrestamo;
+
+    IF @FechaEntrega > @FechaDevolucion
+    BEGIN
+        SET @DiasRetraso = DATEDIFF(DAY, @FechaDevolucion, @FechaEntrega);
+
+        -- Escalado de multas
+        IF @DiasRetraso = 1
+            SET @Monto = 0.50;
+        ELSE IF @DiasRetraso BETWEEN 2 AND 3
+            SET @Monto = 1.50;
+        ELSE IF @DiasRetraso BETWEEN 4 AND 5
+            SET @Monto = 3.00;
+        ELSE IF @DiasRetraso BETWEEN 6 AND 7
+            SET @Monto = 5.00;
+        ELSE
+            SET @Monto = 5.00 + (@DiasRetraso - 7) * 1.00;
+
+        -- Insertar multa
+        INSERT INTO Multas (IdPrestamo, IdUsuario, DiasRetraso, Monto)
+        VALUES (@IdPrestamo, @IdUsuario, @DiasRetraso, @Monto);
+    END
+END;

@@ -167,8 +167,9 @@ public class GestionarUsuarios extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GestionarUsuarios::new);
-    }
+//    Testeo interno
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(GestionarUsuarios::new);
+//    }
 }
 

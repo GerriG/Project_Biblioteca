@@ -30,7 +30,7 @@ public class GestionarLibros extends JFrame {
     // Asegúrate de que el JFrame tenga un fondo blanco
     setBackground(Color.WHITE); // Establecer el fondo del JFrame a blanco
 
-    UIManager.put("Button.font", new Font("Segoe UI Emoji", Font.PLAIN, 14));
+    UIManager.put("Button.font", new Font("Noto Color Emoji", Font.PLAIN, 14));
 
     // Panel superior
     JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));
@@ -243,7 +243,8 @@ public class GestionarLibros extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GestionarLibros::new);
-    }
+//    Testo interno
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(GestionarLibros::new);
+//    }
 }

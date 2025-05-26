@@ -130,7 +130,8 @@ public class GenerarReportes extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GenerarReportes::new);
-    }
+//    Testeo interno
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(GenerarReportes::new);
+//    }
 }

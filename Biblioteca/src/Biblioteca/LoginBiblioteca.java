@@ -111,6 +111,14 @@ public class LoginBiblioteca extends JFrame {
                         JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
                         new PanelAdministrador(correo).setVisible(true);
                         dispose();
+                    } else if (rol.equalsIgnoreCase("Bibliotecario")) {
+                        JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
+                        new PanelBibliotecario(correo).setVisible(true);
+                        dispose();
+                    } else if (rol.equalsIgnoreCase("Usuario")) {
+                        JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso.");
+                        new PanelUsuario(correo).setVisible(true);
+                        dispose();                    
                     } else {
                         JOptionPane.showMessageDialog(this,
                                 "Inicio de sesión exitoso.\nRol '" + rol + "' aún no está implementado.",

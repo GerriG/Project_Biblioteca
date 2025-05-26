@@ -1,28 +1,25 @@
 package Biblioteca;
 
-import java.sql.*;
 import javax.swing.table.DefaultTableModel;
+import java.sql.*;
 
 public class BuscarLibro {
-
-    public static void buscarPorTitulo(String titulo, DefaultTableModel modeloTabla) {
-        modeloTabla.setRowCount(0);
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String query = "SELECT * FROM Libros WHERE titulo LIKE ?";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1, "%" + titulo + "%");
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String estado = rs.getBoolean("disponible") ? "Disponible" : "Agotado";
-                modeloTabla.addRow(new Object[]{
-                    rs.getInt("id"),
-                    rs.getString("titulo"),
-                    rs.getString("autor"),
-                    rs.getInt("anio"),
-                    estado,
-                    rs.getInt("stock")
-                });
+    public static void buscarPorTitulo(String titulo, DefaultTableModel model) {
+        try (Connection conn = Biblioteca.DatabaseConnection.getConnection()) {
+            String sql = "SELECT id_libro, titulo, autor, anio, estado, stock FROM libros WHERE titulo LIKE ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, "%" + titulo + "%");
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    Object[] row = new Object[6];
+                    row[0] = rs.getInt("id_libro");
+                    row[1] = rs.getString("titulo");
+                    row[2] = rs.getString("autor");
+                    row[3] = rs.getInt("anio");
+                    row[4] = rs.getString("estado");
+                    row[5] = rs.getInt("stock");
+                    model.addRow(row);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
