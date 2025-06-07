@@ -10,11 +10,13 @@ import java.sql.*;
 
 public class GestionarUsuarios extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaUsuarios;
     private DefaultTableModel modeloTabla;
     private JScrollPane scrollPane;
     private JButton btnAgregar, btnEditar, btnEliminar, btnActualizar;
 
+    //Configurar ventana
     public GestionarUsuarios() {
         setTitle("👤 Gestión de Usuarios");
         setSize(900, 500);
@@ -26,11 +28,13 @@ public class GestionarUsuarios extends JFrame {
         JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.setBackground(new Color(0, 123, 255));
 
+        //Asignar fuente de titulo
         JLabel titulo = new JLabel("👤 Usuarios Registrados");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 16));
         panelSuperior.add(titulo);
 
+        //Crear objetos
         modeloTabla = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Nacionalidad", "Correo"}, 0);
         tablaUsuarios = new JTable(modeloTabla);
         tablaUsuarios.setRowHeight(25);
@@ -73,8 +77,10 @@ public class GestionarUsuarios extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
+        //Metodo para cargar usuarios
         cargarUsuarios();
 
+        //Agregar acciones a botones
         btnActualizar.addActionListener(e -> cargarUsuarios());
 
         btnAgregar.addActionListener(e -> {
@@ -92,37 +98,35 @@ public class GestionarUsuarios extends JFrame {
         });
 
         btnEliminar.addActionListener(e -> {
-    int fila = tablaUsuarios.getSelectedRow();
-    if (fila != -1) {
-        int id = (int) modeloTabla.getValueAt(fila, 0);
-        new MantenimientoUsuario(this, id, true).setVisible(false); // true = modo eliminar
-    } else {
-        JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar.");
-    }
-});
-
+            int fila = tablaUsuarios.getSelectedRow();
+            if (fila != -1) {
+                int id = (int) modeloTabla.getValueAt(fila, 0);
+                new MantenimientoUsuario(this, id, true).setVisible(false); // true = modo eliminar
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar.");
+            }
+        });
 
         setVisible(true);
     }
 
+    //Metodo para cargar usuarios
     public void cargarUsuarios() {
         modeloTabla.setRowCount(0);
-        String query = "SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Correo " +
-                       "FROM Usuarios U INNER JOIN Roles R ON U.RolId = R.Id " +
-                       "WHERE R.NombreRol = 'Usuario' " +
-                       "ORDER BY U.Apellido";
+        String query = "SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Correo "
+                + "FROM Usuarios U INNER JOIN Roles R ON U.RolId = R.Id "
+                + "WHERE R.NombreRol = 'Usuario' "
+                + "ORDER BY U.Apellido";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 modeloTabla.addRow(new Object[]{
-                        rs.getInt("Id"),
-                        rs.getString("Nombre"),
-                        rs.getString("Apellido"),
-                        rs.getString("Nacionalidad"),
-                        rs.getString("Correo")
+                    rs.getInt("Id"),
+                    rs.getString("Nombre"),
+                    rs.getString("Apellido"),
+                    rs.getString("Nacionalidad"),
+                    rs.getString("Correo")
                 });
             }
         } catch (SQLException e) {
@@ -130,6 +134,7 @@ public class GestionarUsuarios extends JFrame {
         }
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -148,6 +153,7 @@ public class GestionarUsuarios extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Noto Color Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -159,6 +165,7 @@ public class GestionarUsuarios extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Centrar el contenido de la tabla
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);

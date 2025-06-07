@@ -7,11 +7,13 @@ import java.sql.*;
 
 public class PanelAdministrador extends JFrame {
 
+    //Objetos de ventana
     private JLabel lblAvatar, lblNombre, lblDatos;
     private JButton btnGestionarUsuarios, btnGenerarReportes, btnGestionarPersonal;
     private String correoUsuario;
     private Image fondo;
 
+    //Asignar una imagen de forndo a la ventana y cargar sus UI.
     public PanelAdministrador(String correoUsuario) {
         this.correoUsuario = correoUsuario;
         fondo = new ImageIcon(getClass().getResource("/Biblioteca/Wallpaper/Admin.png")).getImage();
@@ -19,6 +21,7 @@ public class PanelAdministrador extends JFrame {
         cargarDatosAdministrador(correoUsuario);
     }
 
+    //Configurar UI de ventana
     private void initUI() {
         setTitle("Panel de Administrador");
         setSize(527, 700); // Tamaño ajustado
@@ -31,6 +34,7 @@ public class PanelAdministrador extends JFrame {
                 g.drawImage(fondo, 0, 0, getWidth(), getHeight(), this);
             }
         };
+        //Configurar Layout de ventana
         panelPrincipal.setLayout(new GridBagLayout());
         panelPrincipal.setBorder(new EmptyBorder(20, 20, 20, 20));
         panelPrincipal.setOpaque(false);
@@ -88,12 +92,11 @@ public class PanelAdministrador extends JFrame {
         setContentPane(panelPrincipal);
     }
 
-
+    //Cargar los datos del administrador que ha ingresado
     private void cargarDatosAdministrador(String correo) {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT Nombre, Apellido, Nacionalidad, Sexo, R.NombreRol " +
-                     "FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = ?")) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(
+                "SELECT Nombre, Apellido, Nacionalidad, Sexo, R.NombreRol "
+                + "FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = ?")) {
 
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();
@@ -124,6 +127,7 @@ public class PanelAdministrador extends JFrame {
         }
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
         boton.setFocusPainted(false);

@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class PanelUsuario extends JFrame {
+
+    //Objetos de ventana
     private JTable tablaHistorial;
     private DefaultTableModel modeloTabla;
     private String usuario;
@@ -17,6 +19,7 @@ public class PanelUsuario extends JFrame {
     private Image fondo;
     private Image avatarImg;
 
+    //Configurar ventana
     public PanelUsuario(String correoUsuario) {
         this.usuario = correoUsuario;
         this.sexoUsuario = obtenerSexoDesdeSP(correoUsuario);
@@ -27,11 +30,14 @@ public class PanelUsuario extends JFrame {
         String avatarFile = sexoUsuario.equalsIgnoreCase("Femenino") ? "Femenino.png" : "Masculino.png";
         avatarImg = new ImageIcon(getClass().getResource("/Biblioteca/Avatares/" + avatarFile)).getImage();
 
+        //Iniciar UI
         initUI();
         cargarHistorial();
     }
 
+    //UI de Panel Usuario
     private void initUI() {
+        //Configurar ventana
         setTitle("Panel de Usuario");
         setSize(900, 600);
         setLocationRelativeTo(null);
@@ -121,6 +127,7 @@ public class PanelUsuario extends JFrame {
         });
     }
 
+    //Crear botones
     private JButton crearBoton(String texto) {
         JButton boton = new JButton(texto);
         boton.setFocusPainted(false);
@@ -132,9 +139,9 @@ public class PanelUsuario extends JFrame {
         return boton;
     }
 
+    //Cargar el historial del usuario desde la BD mediante SP
     private void cargarHistorial() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_HistorialPrestamosUsuario(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_HistorialPrestamosUsuario(?)}")) {
 
             stmt.setString(1, usuario);
             ResultSet rs = stmt.executeQuery();
@@ -156,6 +163,7 @@ public class PanelUsuario extends JFrame {
         }
     }
 
+    //Calcular el estado de entrega de libro
     private String calcularEstado(String fechaEntrega, String fechaReal) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -170,9 +178,9 @@ public class PanelUsuario extends JFrame {
         }
     }
 
+    //Obtener el sexo del usuario mediante SP
     private String obtenerSexoDesdeSP(String correo) {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_ObtenerUsuarioPorCorreo(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_ObtenerUsuarioPorCorreo(?)}")) {
 
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();
@@ -185,9 +193,9 @@ public class PanelUsuario extends JFrame {
         return "Masculino";
     }
 
+    //Obtener el nombre del usuario mediante SP
     private String SP_ObtenerNombre(String correo) {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_ObtenerUsuarioPorCorreo(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_ObtenerUsuarioPorCorreo(?)}")) {
 
             stmt.setString(1, correo);
             ResultSet rs = stmt.executeQuery();

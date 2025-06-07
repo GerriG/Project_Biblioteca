@@ -8,10 +8,12 @@ import java.util.Date;
 
 public class HistorialUsuario extends JFrame {
 
+    //Objetos de tabla
     private JTable tablaHistorial;
     private DefaultTableModel modeloTabla;
     private String usuario;
 
+    //Configurar ventana
     public HistorialUsuario(String usuario) {
         this.usuario = usuario;
 
@@ -20,6 +22,7 @@ public class HistorialUsuario extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        //Crear objetos de ventana
         modeloTabla = new DefaultTableModel(new String[]{
             "Título", "Fecha Préstamo", "Fecha Devolución", "Estado"
         }, 0);
@@ -35,9 +38,11 @@ public class HistorialUsuario extends JFrame {
         panelInferior.add(btnCerrar);
         add(panelInferior, BorderLayout.SOUTH);
 
+        //Llamar metodo para cargar el historial
         cargarHistorial();
     }
 
+    //Metodo para cargar el historial del usuario
     private void cargarHistorial() {
         try (Connection conn = Biblioteca.DatabaseConnection.getConnection()) {
             String sql = "EXEC sp_HistorialPrestamosUsuario ?";

@@ -10,6 +10,7 @@ import java.sql.*;
 
 public class GestionarInventario extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaInventario;
     private DefaultTableModel modeloTabla;
     private JTextField campoBusqueda;
@@ -17,6 +18,7 @@ public class GestionarInventario extends JFrame {
     private JLabel mensajeCentral;
     private JScrollPane scrollPane;
 
+    //Configuracion de ventana
     public GestionarInventario() {
         setTitle("📦 Gestión de Inventario");
         setSize(900, 500);
@@ -32,6 +34,7 @@ public class GestionarInventario extends JFrame {
         JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.setBackground(new Color(0, 123, 255));
 
+        //Crear botones
         campoBusqueda = new JTextField(30);
         campoBusqueda.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY),
@@ -136,6 +139,7 @@ public class GestionarInventario extends JFrame {
         setVisible(true);
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -154,6 +158,7 @@ public class GestionarInventario extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -165,6 +170,7 @@ public class GestionarInventario extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Cargar el inventario en la BD
     private void cargarInventario() {
         modeloTabla.setRowCount(0);
         try (Connection conn = DatabaseConnection.getConnection()) {
@@ -174,10 +180,10 @@ public class GestionarInventario extends JFrame {
             while (rs.next()) {
                 hayDatos = true;
                 modeloTabla.addRow(new Object[]{
-                        rs.getInt("id"),
-                        rs.getInt("id_libro"),
-                        rs.getString("codigo_copia"),
-                        rs.getString("estado")
+                    rs.getInt("id"),
+                    rs.getInt("id_libro"),
+                    rs.getString("codigo_copia"),
+                    rs.getString("estado")
                 });
             }
             mostrarMensajeSiTablaVacia(!hayDatos, "📭 No hay copias registradas.");
@@ -186,6 +192,7 @@ public class GestionarInventario extends JFrame {
         }
     }
 
+    //Realizar la busqueda en la BD
     private void buscarInventario(String filtro) {
         modeloTabla.setRowCount(0); // Limpiar la tabla antes de buscar
         BuscarInventario.buscar(filtro, modeloTabla);
@@ -193,6 +200,7 @@ public class GestionarInventario extends JFrame {
         mostrarMensajeSiTablaVacia(sinResultados, "🔍 No se encontraron resultados para el filtro ingresado.");
     }
 
+    //Mensaje en caso de que la tabla no posea datos
     private void mostrarMensajeSiTablaVacia(boolean mostrar, String mensaje) {
         if (mostrar) {
             remove(scrollPane);
@@ -207,6 +215,7 @@ public class GestionarInventario extends JFrame {
         repaint();
     }
 
+    //Centrar el contenido de la tabla
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);
@@ -215,6 +224,7 @@ public class GestionarInventario extends JFrame {
         }
     }
 
+    //Mostrar alertas
     private void mostrarDialogoAviso(String mensaje) {
         JOptionPane optionPane = new JOptionPane(mensaje, JOptionPane.WARNING_MESSAGE);
         JDialog dialog = optionPane.createDialog(this, "⚠️ Aviso");

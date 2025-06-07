@@ -12,12 +12,14 @@ import java.sql.*;
 
 public class LibrosDisponibles extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaLibros;
     private DefaultTableModel modeloTabla;
     private JScrollPane scrollPane;
     private JLabel mensajeCentral;
     private String usuario;
 
+    //Configurar ventana
     public LibrosDisponibles(String usuario) {
         this.usuario = usuario;
 
@@ -33,6 +35,7 @@ public class LibrosDisponibles extends JFrame {
         panelTitulo.setBackground(new Color(0, 120, 215));
         panelTitulo.setBorder(new EmptyBorder(12, 20, 12, 20));
 
+        //Asignar fuente a titulos
         JLabel lblTitulo = new JLabel("📚 Libros Disponibles");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 18));
@@ -91,10 +94,12 @@ public class LibrosDisponibles extends JFrame {
             }
         });
 
+        //Llamar metodo para cargar libros
         cargarLibros();
         setVisible(true);
     }
 
+    //Metodo para realizar prestamos y registrarlos en la BD
     private void realizarPrestamo() {
         int filaSeleccionada = tablaLibros.getSelectedRow();
         if (filaSeleccionada == -1) {
@@ -127,8 +132,8 @@ public class LibrosDisponibles extends JFrame {
                     String codigo = rs.getString("CodigoCopia");
                     String saludo = sexo.equals("Femenino") ? "Estimada" : "Estimado";
                     JOptionPane.showMessageDialog(this,
-                            saludo + " " + nombre + ", acérquese a un secretario y proporcione el siguiente código de préstamo:\n" +
-                                    "📘 *" + titulo + "*\n📄 Código: " + codigo,
+                            saludo + " " + nombre + ", acérquese a un secretario y proporcione el siguiente código de préstamo:\n"
+                            + "📘 *" + titulo + "*\n📄 Código: " + codigo,
                             "Solicitud de Préstamo", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(this, "Este libro no tiene copias disponibles actualmente.");
@@ -140,6 +145,7 @@ public class LibrosDisponibles extends JFrame {
         }
     }
 
+    //Metodo para cargar libros de la BD
     private void cargarLibros() {
         modeloTabla.setRowCount(0);
         try (Connection conn = Biblioteca.DatabaseConnection.getConnection()) {
@@ -184,7 +190,7 @@ public class LibrosDisponibles extends JFrame {
         }
     }
 
-
+    //Mensaje en caso de que la tabla este vacia
     private void mostrarMensajeSiTablaVacia(boolean mostrar, String mensaje) {
         if (mostrar) {
             remove(scrollPane);
@@ -198,6 +204,7 @@ public class LibrosDisponibles extends JFrame {
         repaint();
     }
 
+    //Centrar el contenido de la tabla
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);
@@ -206,6 +213,7 @@ public class LibrosDisponibles extends JFrame {
         }
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -224,6 +232,7 @@ public class LibrosDisponibles extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);

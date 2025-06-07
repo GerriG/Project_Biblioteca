@@ -10,11 +10,13 @@ import java.sql.*;
 
 public class GestionarPersonal extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaPersonal;
     private DefaultTableModel modeloTabla;
     private JScrollPane scrollPane;
     private JButton btnAgregar, btnEditar, btnEliminar, btnActualizar;
 
+    //Configurar ventana
     public GestionarPersonal() {
         setTitle("👥 Gestión de Personal");
         setSize(900, 500);
@@ -26,11 +28,13 @@ public class GestionarPersonal extends JFrame {
         JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.setBackground(new Color(0, 123, 255));
 
+        //Asignar fuente a titulo
         JLabel titulo = new JLabel("👥 Personal Activo (Administrador, Secretario, Bibliotecario)");
         titulo.setForeground(Color.WHITE);
         titulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 16));
         panelSuperior.add(titulo);
 
+        //Configurar objetos
         modeloTabla = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Nacionalidad", "Correo", "Rol"}, 0);
         tablaPersonal = new JTable(modeloTabla);
         tablaPersonal.setRowHeight(25);
@@ -41,6 +45,7 @@ public class GestionarPersonal extends JFrame {
         tablaPersonal.setBackground(Color.WHITE);
         centrarContenidoTabla();
 
+        //Scroll Panel
         scrollPane = new JScrollPane(tablaPersonal);
         scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         scrollPane.getViewport().setBackground(Color.WHITE);
@@ -54,6 +59,7 @@ public class GestionarPersonal extends JFrame {
         JPanel panelInferior = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.setBackground(new Color(135, 206, 250));
 
+        //Crear botones
         btnAgregar = new JButton("➕ Agregar");
         btnEditar = new JButton("✏️ Editar");
         btnEliminar = new JButton("🗑️ Eliminar");
@@ -73,8 +79,10 @@ public class GestionarPersonal extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(panelInferior, BorderLayout.SOUTH);
 
+        //Llamar el metodo de carga de personal
         cargarPersonal();
 
+        //Asignar acciones de botones
         btnActualizar.addActionListener(e -> cargarPersonal());
 
         btnAgregar.addActionListener(e -> {
@@ -104,25 +112,24 @@ public class GestionarPersonal extends JFrame {
         setVisible(true);
     }
 
+    //Metoodo para cargar el personal en la BD
     public void cargarPersonal() {
         modeloTabla.setRowCount(0);
-        String query = "SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Correo, R.NombreRol " +
-                       "FROM Usuarios U INNER JOIN Roles R ON U.RolId = R.Id " +
-                       "WHERE R.NombreRol IN ('Administrador', 'Secretario', 'Bibliotecario') " +
-                       "ORDER BY R.NombreRol, U.Apellido";
+        String query = "SELECT U.Id, U.Nombre, U.Apellido, U.Nacionalidad, U.Correo, R.NombreRol "
+                + "FROM Usuarios U INNER JOIN Roles R ON U.RolId = R.Id "
+                + "WHERE R.NombreRol IN ('Administrador', 'Secretario', 'Bibliotecario') "
+                + "ORDER BY R.NombreRol, U.Apellido";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 modeloTabla.addRow(new Object[]{
-                        rs.getInt("Id"),
-                        rs.getString("Nombre"),
-                        rs.getString("Apellido"),
-                        rs.getString("Nacionalidad"),
-                        rs.getString("Correo"),
-                        rs.getString("NombreRol")
+                    rs.getInt("Id"),
+                    rs.getString("Nombre"),
+                    rs.getString("Apellido"),
+                    rs.getString("Nacionalidad"),
+                    rs.getString("Correo"),
+                    rs.getString("NombreRol")
                 });
             }
         } catch (SQLException e) {
@@ -130,6 +137,7 @@ public class GestionarPersonal extends JFrame {
         }
     }
 
+    //Titulo redondeado
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -148,6 +156,7 @@ public class GestionarPersonal extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Noto Color Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -159,6 +168,7 @@ public class GestionarPersonal extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Centrar contenido de la tabla
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);

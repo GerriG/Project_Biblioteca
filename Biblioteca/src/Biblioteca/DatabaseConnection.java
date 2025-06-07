@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
+
     // URL de conexión a SQL Server usando localhost
     private static final String URL = "jdbc:sqlserver://localhost;databaseName=BibliotecaDB;integratedSecurity=true;encrypt=false";
 
@@ -14,7 +15,7 @@ public class DatabaseConnection {
         try {
             // Intentar establecer la conexión con SQL Server
             Connection connection = DriverManager.getConnection(URL);
-            
+
             return connection;
         } catch (SQLException e) {
             // Si ocurre un error, se captura y se imprime el mensaje

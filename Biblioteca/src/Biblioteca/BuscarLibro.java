@@ -4,6 +4,8 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 
 public class BuscarLibro {
+
+    //Metodo y parametros para buscar libros por sus datos.
     public static void buscarPorTitulo(String titulo, DefaultTableModel model) {
         try (Connection conn = Biblioteca.DatabaseConnection.getConnection()) {
             String sql = "SELECT id_libro, titulo, autor, anio, estado, stock FROM libros WHERE titulo LIKE ?";

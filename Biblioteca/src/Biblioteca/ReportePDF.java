@@ -1,5 +1,6 @@
 package Biblioteca;
 
+//Dependencias de iPDF
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.geom.PageSize;
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 public class ReportePDF {
 
+    //Generar el reporte PDF mediante datos de la BD
     public static void generarDesdeTabla(JTable tabla) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Guardar reporte como...");

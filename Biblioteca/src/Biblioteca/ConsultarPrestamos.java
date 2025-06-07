@@ -10,12 +10,14 @@ import java.sql.*;
 
 public class ConsultarPrestamos extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaPrestamos;
     private DefaultTableModel modeloTabla;
     private JTextField campoBusqueda;
     private JLabel mensajeCentral;
     private JScrollPane scrollPane;
 
+    //Metodo para consultar prestamos
     public ConsultarPrestamos() {
         setTitle("📄 Consultar Préstamos");
         setSize(1000, 550);
@@ -47,7 +49,7 @@ public class ConsultarPrestamos extends JFrame {
 
         // Tabla
         modeloTabla = new DefaultTableModel(new Object[]{
-                "ID", "Título", "Código Copia", "Prestado Por", "Fecha Préstamo", "Fecha Devolución", "Estado Devolución"
+            "ID", "Título", "Código Copia", "Prestado Por", "Fecha Préstamo", "Fecha Devolución", "Estado Devolución"
         }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -145,6 +147,7 @@ public class ConsultarPrestamos extends JFrame {
         setVisible(true);
     }
 
+    //Metodo para buscar los prestamos que el usuario ha realizado
     private void buscarPrestamosPorUsuario() {
         modeloTabla.setRowCount(0);
         String busqueda = campoBusqueda.getText().trim();
@@ -198,7 +201,7 @@ public class ConsultarPrestamos extends JFrame {
         }
     }
 
-
+    //Mensaje en caso de que el usuario no haya realizado ningun prestamo
     private void mostrarMensajeSiTablaVacia(boolean mostrar, String mensaje) {
         if (mostrar) {
             remove(scrollPane);
@@ -212,6 +215,7 @@ public class ConsultarPrestamos extends JFrame {
         repaint();
     }
 
+    //Titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -228,6 +232,7 @@ public class ConsultarPrestamos extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBotonClaro(JButton boton) {
         boton.setFont(new Font("Noto Color Emoji", Font.BOLD, 13));
         boton.setFocusPainted(false);
@@ -240,6 +245,7 @@ public class ConsultarPrestamos extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Centrar el contenido de la tabla en la ventana
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);

@@ -10,11 +10,13 @@ import java.sql.*;
 
 public class GestionarMora extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaMultas;
     private DefaultTableModel modelo;
     private JScrollPane scrollPane;
     private JButton btnPagar;
 
+    //Configurar ventana
     public GestionarMora() {
         setTitle("💰 Gestionar Mora");
         setSize(800, 500);
@@ -65,7 +67,7 @@ public class GestionarMora extends JFrame {
         panelInferior.setBackground(new Color(135, 206, 235));
         panelInferior.setBorder(new EmptyBorder(10, 20, 10, 20)); // ← margen adecuado
 
-        btnPagar = new JButton("💰 Pago de Mora");        
+        btnPagar = new JButton("💰 Pago de Mora");
         estiloBoton(btnPagar);
         btnPagar.setEnabled(false);
 
@@ -96,20 +98,20 @@ public class GestionarMora extends JFrame {
         setVisible(true);
     }
 
+    //Cargar multas en la BD.
     private void cargarMultas() {
         modelo.setRowCount(0);
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement cs = conn.prepareCall("{call sp_ObtenerMultas}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement cs = conn.prepareCall("{call sp_ObtenerMultas}")) {
 
             ResultSet rs = cs.executeQuery();
             while (rs.next()) {
                 modelo.addRow(new Object[]{
-                        rs.getInt("IdMulta"),
-                        rs.getString("NombreUsuario"),
-                        rs.getInt("DiasRetraso"),
-                        rs.getBigDecimal("Monto"),
-                        rs.getDate("FechaMulta"),
-                        rs.getString("Estado")
+                    rs.getInt("IdMulta"),
+                    rs.getString("NombreUsuario"),
+                    rs.getInt("DiasRetraso"),
+                    rs.getBigDecimal("Monto"),
+                    rs.getDate("FechaMulta"),
+                    rs.getString("Estado")
                 });
             }
         } catch (SQLException ex) {
@@ -117,9 +119,12 @@ public class GestionarMora extends JFrame {
         }
     }
 
+    //Efectuar el pago de mora del usuario.
     private void pagarMora() {
         int fila = tablaMultas.getSelectedRow();
-        if (fila < 0) return;
+        if (fila < 0) {
+            return;
+        }
 
         int idMulta = (int) tablaMultas.getValueAt(fila, 0);
         String usuario = tablaMultas.getValueAt(fila, 1).toString();
@@ -131,8 +136,7 @@ public class GestionarMora extends JFrame {
                 "¿Deseas registrar el pago de esta mora?", "Confirmar Pago", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            try (Connection conn = DatabaseConnection.getConnection();
-                 CallableStatement cs = conn.prepareCall("{call sp_PagarMulta(?)}")) {
+            try (Connection conn = DatabaseConnection.getConnection(); CallableStatement cs = conn.prepareCall("{call sp_PagarMulta(?)}")) {
 
                 cs.setInt(1, idMulta);
                 cs.executeUpdate();
@@ -147,6 +151,7 @@ public class GestionarMora extends JFrame {
         }
     }
 
+    //Centrar el contenido de la tabla
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -155,6 +160,7 @@ public class GestionarMora extends JFrame {
         }
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setBackground(new Color(0, 120, 215));
         boton.setForeground(Color.WHITE);
@@ -164,6 +170,7 @@ public class GestionarMora extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override

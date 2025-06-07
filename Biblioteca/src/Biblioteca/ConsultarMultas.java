@@ -12,6 +12,7 @@ import java.sql.*;
 
 public class ConsultarMultas extends JFrame {
 
+    //Configurar objetos de la ventana
     private JTable tablaMultas;
     private DefaultTableModel modeloTabla;
     private JScrollPane scrollPane;
@@ -21,6 +22,7 @@ public class ConsultarMultas extends JFrame {
     public ConsultarMultas(String usuario) {
         this.usuario = usuario;
 
+        //Configurar ventana
         setTitle("💰 Consultar Mora");
         setSize(800, 500);
         setLocationRelativeTo(null);
@@ -33,6 +35,7 @@ public class ConsultarMultas extends JFrame {
         panelTitulo.setBackground(new Color(0, 120, 215));
         panelTitulo.setBorder(new EmptyBorder(12, 20, 12, 20));
 
+        //Asignar fuente de titulo
         JLabel lblTitulo = new JLabel("💰 Consultar Mora");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 18));
@@ -93,6 +96,7 @@ public class ConsultarMultas extends JFrame {
         setVisible(true);
     }
 
+    //Metodo para guardar las multas en la BD
     private void cargarMultas() {
         modeloTabla.setRowCount(0);
         try (Connection conn = Biblioteca.DatabaseConnection.getConnection()) {
@@ -121,6 +125,7 @@ public class ConsultarMultas extends JFrame {
         }
     }
 
+    //Mnesaje que se mostrara en caso de que el usuario no tenga multas
     private void mostrarMensajeSiTablaVacia(boolean mostrar, String mensaje) {
         if (mostrar) {
             remove(scrollPane);
@@ -134,6 +139,7 @@ public class ConsultarMultas extends JFrame {
         repaint();
     }
 
+    //Centrar el mensaje en la ventana
     private void centrarContenidoTabla() {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);
@@ -142,6 +148,7 @@ public class ConsultarMultas extends JFrame {
         }
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -160,6 +167,7 @@ public class ConsultarMultas extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);

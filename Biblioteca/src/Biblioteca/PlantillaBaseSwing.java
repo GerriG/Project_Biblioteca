@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class PlantillaBaseSwing extends JFrame {
 
+    //Configurar ventana
     public PlantillaBaseSwing(String tituloVentana) {
         setTitle(tituloVentana);
         setSize(800, 600);

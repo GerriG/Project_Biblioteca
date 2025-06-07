@@ -1,5 +1,6 @@
 package Biblioteca;
 
+//Importar todas las dependencias de iPDF
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
@@ -36,6 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class PDFMora {
 
+    //Crear archivo PDF con los datos de la mora
     public static void generarPDF(String usuario, int diasRetraso, double monto, String fecha) {
         try {
             PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
@@ -92,6 +94,7 @@ public class PDFMora {
         }
     }
 
+    //Centrar el contenido de la tabla
     public static void centrarContenidoTabla(JTable tablaMultas) {
         DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
         centrado.setHorizontalAlignment(SwingConstants.CENTER);
@@ -101,6 +104,7 @@ public class PDFMora {
         }
     }
 
+    //Crear titulo redondeado
     public static JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -119,6 +123,7 @@ public class PDFMora {
         return panel;
     }
 
+    //Formatear botones
     public static void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);

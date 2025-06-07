@@ -5,18 +5,22 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class LoginBiblioteca extends JFrame {
 
+    //Objetos de ventana
     private JTextField txtCorreo;
     private JPasswordField txtPassword;
     private JButton btnLogin, btnSalir, btnRegistrar;
     private JLabel lblOlvidaste;
 
+    //Iniciar UI de Login
     public LoginBiblioteca() {
         initUI();
     }
 
+    //Configurar ventana
     private void initUI() {
         setTitle("📚 Biblioteca Login");
         setSize(500, 400);
@@ -29,11 +33,13 @@ public class LoginBiblioteca extends JFrame {
         JPanel panelSuperior = crearPanelRedondeado(new FlowLayout(FlowLayout.CENTER));
         panelSuperior.setBackground(new Color(0, 123, 255));
 
+        //Asignar fuentes a titulo
         JLabel lblTitulo = new JLabel("📚 Biblioteca Login");
         lblTitulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 26));
         lblTitulo.setForeground(Color.WHITE);
         panelSuperior.add(lblTitulo);
 
+        //Crear objetos de ventana
         JPanel panelCentro = crearPanelRedondeado(new GridBagLayout());
         panelCentro.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -74,6 +80,7 @@ public class LoginBiblioteca extends JFrame {
         JPanel panelInferior = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.setBackground(new Color(135, 206, 235));
 
+        //Crear botones
         btnLogin = new JButton("🔑 Iniciar sesión");
         btnRegistrar = new JButton("📝 Registrarse");
         btnSalir = new JButton("❌ Salir");
@@ -98,7 +105,8 @@ public class LoginBiblioteca extends JFrame {
                 JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.", "Información", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-
+            
+            //Atentificar usuarios y loguearlos segun su rol
             AutentificarUsuario auth = new AutentificarUsuario();
             if (auth.validarUsuario(correo, contraseña)) {
                 String rol = obtenerRolUsuario(correo);
@@ -146,6 +154,7 @@ public class LoginBiblioteca extends JFrame {
         });
     }
 
+    //Crear titulo redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -162,6 +171,7 @@ public class LoginBiblioteca extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -173,6 +183,7 @@ public class LoginBiblioteca extends JFrame {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Obtener el rol del usuario para rederigirlo segun sea el caso
     private String obtenerRolUsuario(String correo) {
         String rol = null;
         try (Connection conn = DatabaseConnection.getConnection();
@@ -192,6 +203,7 @@ public class LoginBiblioteca extends JFrame {
         return rol;
     }
 
+    //Metodo main para ejecutar el login
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginBiblioteca().setVisible(true));
     }

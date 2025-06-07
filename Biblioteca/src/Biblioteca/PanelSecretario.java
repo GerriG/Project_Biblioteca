@@ -19,6 +19,7 @@ class RoundedPanel extends JPanel {
     }
 
     @Override
+    //Procesar componentes de UI
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Dimension arcs = new Dimension(cornerRadius, cornerRadius);
@@ -34,11 +35,13 @@ class RoundedPanel extends JPanel {
 
 public class PanelSecretario extends JFrame {
 
+    //Objetos de ventana
     private JLabel lblAvatar, lblNombre, lblDatos;
     private JButton btnGestionarLibros, btnPrestamosDevoluciones, btnGestionarMora;
     private String correoUsuario;
     private Image fondo;
 
+    //Asignar imagen de fondo al panel Secretario
     public PanelSecretario(String correoUsuario) {
         this.correoUsuario = correoUsuario;
         fondo = new ImageIcon(getClass().getResource("/Biblioteca/Wallpaper/Fondo.jpg")).getImage();
@@ -46,12 +49,15 @@ public class PanelSecretario extends JFrame {
         cargarDatosSecretaria(correoUsuario);
     }
 
+    //Cargar UI
     private void initUI() {
+        //Configurar UI
         setTitle("Panel de Secretaria");
         setSize(527, 700);  // Escalado desde 500x600
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        //Configurar Layout
         JPanel panelPrincipal = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -67,6 +73,7 @@ public class PanelSecretario extends JFrame {
         panelContenido.setBorder(new EmptyBorder(35, 35, 35, 35));
         panelContenido.setOpaque(false);
 
+        //Crear objetos y botones
         lblAvatar = new JLabel();
         lblAvatar.setHorizontalAlignment(SwingConstants.CENTER);
         lblAvatar.setPreferredSize(new Dimension(158, 175));
@@ -110,6 +117,7 @@ public class PanelSecretario extends JFrame {
         setContentPane(panelPrincipal);
     }
 
+    //Cargar datos de la secretaria.
     private void cargarDatosSecretaria(String correo) {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(
                 "SELECT Nombre, Apellido, Nacionalidad, Sexo, R.NombreRol FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = ?")) {
@@ -144,6 +152,7 @@ public class PanelSecretario extends JFrame {
         }
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
         boton.setFocusPainted(false);

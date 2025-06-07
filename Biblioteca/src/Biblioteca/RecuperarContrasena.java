@@ -8,9 +8,11 @@ import java.sql.*;
 
 public class RecuperarContrasena extends JFrame {
 
+    //Objetos de ventana
     private JTextField txtCorreo, txtNombre, txtApellido;
     private JButton btnVerificar;
 
+    //Configurar ventana
     public RecuperarContrasena() {
         setTitle("🔐 Recuperar Contraseña");
         setSize(500, 450);
@@ -36,6 +38,7 @@ public class RecuperarContrasena extends JFrame {
 
         Font fuenteCampos = new Font("Segoe UI", Font.PLAIN, 14);
 
+        //Crear campos y botones
         txtCorreo = agregarCampo(panelCentro, "Correo:", gbc, 0, fuenteCampos);
         txtNombre = agregarCampo(panelCentro, "Nombre:", gbc, 1, fuenteCampos);
         txtApellido = agregarCampo(panelCentro, "Apellido:", gbc, 2, fuenteCampos);
@@ -68,6 +71,7 @@ public class RecuperarContrasena extends JFrame {
         });
     }
 
+    //Agregar campos de texto
     private JTextField agregarCampo(JPanel panel, String etiqueta, GridBagConstraints gbc, int fila, Font fuente) {
         JLabel lbl = new JLabel(etiqueta);
         lbl.setFont(fuente);
@@ -86,6 +90,7 @@ public class RecuperarContrasena extends JFrame {
         return txt;
     }
 
+    //Verificar los datos del usuario y proceder a solicitar nueva contraseña
     private void verificarYMostrarNuevaVentana() {
         String correo = txtCorreo.getText().trim();
         String nombre = txtNombre.getText().trim();
@@ -112,6 +117,7 @@ public class RecuperarContrasena extends JFrame {
         }
     }
 
+    //Ventana para solcitar nueva contraseña y procesar su cambio
     private void mostrarVentanaNuevaContrasena(String nombreCompleto, String sexo, String correo) {
         JFrame frameNueva = new JFrame("🔐 Recuperar Contraseña");
         frameNueva.setSize(500, 400);
@@ -224,7 +230,6 @@ public class RecuperarContrasena extends JFrame {
             }
         });
 
-
         btnCancelar.addActionListener(e -> {
             frameNueva.dispose();
             volverAlLogin();
@@ -236,11 +241,13 @@ public class RecuperarContrasena extends JFrame {
         frameNueva.setVisible(true);
     }
 
+    //Volver al login
     private void volverAlLogin() {
         new LoginBiblioteca().setVisible(true);
         dispose();
     }
 
+    //Titulo redondeado
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -257,6 +264,7 @@ public class RecuperarContrasena extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -266,5 +274,5 @@ public class RecuperarContrasena extends JFrame {
                 new EmptyBorder(6, 12, 6, 12)
         ));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }    
+    }
 }

@@ -6,9 +6,11 @@ import java.awt.*;
 import java.sql.*;
 
 public class AgregarLibro extends JDialog {
+
     private JTextField campoTitulo, campoAutor, campoAnio, campoStock;
     private JButton botonGuardar;
 
+    //Configurar ventana
     public AgregarLibro(JFrame parent) {
         super(parent, "📘 Agregar nuevo libro", true);
         setSize(500, 420);
@@ -36,8 +38,10 @@ public class AgregarLibro extends JDialog {
         gbc.insets = new Insets(12, 12, 12, 12);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
+        //Asignar fuente
         Font fuente = new Font("Noto Color Emoji", Font.PLAIN, 14);
 
+        //Crear campos
         campoTitulo = new JTextField();
         campoAutor = new JTextField();
         campoAnio = new JTextField();
@@ -100,12 +104,14 @@ public class AgregarLibro extends JDialog {
         setVisible(true);
     }
 
+    //Crear etiqueta
     private JLabel crearLabel(String texto, Font fuente) {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(fuente);
         return lbl;
     }
 
+    //Dar formato a los botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Noto Color Emoji", Font.PLAIN, 14));
         boton.setBackground(new Color(0, 120, 215));
@@ -115,6 +121,7 @@ public class AgregarLibro extends JDialog {
         boton.setBorder(new EmptyBorder(8, 20, 8, 20));
     }
 
+    //Crear los rectangulos de titulo redoneados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -131,6 +138,7 @@ public class AgregarLibro extends JDialog {
         return panel;
     }
 
+    //Metodo para guardar libros
     private void guardarLibro() {
         String titulo = campoTitulo.getText().trim();
         String autor = campoAutor.getText().trim();

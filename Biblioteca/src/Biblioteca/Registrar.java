@@ -8,11 +8,13 @@ import java.sql.*;
 
 public class Registrar extends JFrame {
 
+    //Objetos de ventana
     private JTextField txtNombre, txtApellido, txtNacionalidad, txtCorreo;
     private JPasswordField txtContrasena;
     private JComboBox<String> comboSexo;
     private JButton btnRegistrar, btnCancelar;
 
+    //Configurar ventana
     public Registrar() {
         setTitle("📝 Registro de Usuario");
         setSize(500, 480);
@@ -45,13 +47,15 @@ public class Registrar extends JFrame {
 
         JLabel lblSexo = new JLabel("Sexo:");
         lblSexo.setFont(fuenteCampos);
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         panelCentro.add(lblSexo, gbc);
 
         comboSexo = new JComboBox<>(new String[]{"Masculino", "Femenino"});
         comboSexo.setFont(fuenteCampos);
         comboSexo.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        gbc.gridx = 1; gbc.gridy = 3;
+        gbc.gridx = 1;
+        gbc.gridy = 3;
         panelCentro.add(comboSexo, gbc);
 
         txtCorreo = agregarCampo(panelCentro, "Correo:", gbc, 4, fuenteCampos);
@@ -62,9 +66,11 @@ public class Registrar extends JFrame {
                 new EmptyBorder(5, 10, 5, 10)));
         JLabel lblPass = new JLabel("Contraseña:");
         lblPass.setFont(fuenteCampos);
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         panelCentro.add(lblPass, gbc);
-        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.gridx = 1;
+        gbc.gridy = 5;
         panelCentro.add(txtContrasena, gbc);
 
         // Panel inferior
@@ -96,10 +102,12 @@ public class Registrar extends JFrame {
         });
     }
 
+    //Agregar campos de texto
     private JTextField agregarCampo(JPanel panel, String etiqueta, GridBagConstraints gbc, int fila, Font fuente) {
         JLabel lbl = new JLabel(etiqueta);
         lbl.setFont(fuente);
-        gbc.gridx = 0; gbc.gridy = fila;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
         panel.add(lbl, gbc);
 
         JTextField txt = new JTextField(20);
@@ -107,12 +115,14 @@ public class Registrar extends JFrame {
         txt.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY),
                 new EmptyBorder(5, 10, 5, 10)));
-        gbc.gridx = 1; gbc.gridy = fila;
+        gbc.gridx = 1;
+        gbc.gridy = fila;
         panel.add(txt, gbc);
 
         return txt;
     }
-
+    
+    //Registrar un nuevo usuario a la BD
     private void registrarUsuario() {
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
@@ -149,11 +159,13 @@ public class Registrar extends JFrame {
         }
     }
 
+    //Volver al Login al finalizar
     private void volverAlLogin() {
         new LoginBiblioteca().setVisible(true);
         dispose();
     }
 
+    //Crear titulo redondeado
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -170,6 +182,7 @@ public class Registrar extends JFrame {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);

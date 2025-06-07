@@ -6,13 +6,17 @@ import java.awt.*;
 import java.sql.*;
 
 public class EditarLibro extends JDialog {
+
+    //Objetos de ventana
     private JTextField campoTitulo, campoAutor, campoAnio, campoStock;
     private int libroId;
 
+    //Titulo de ventana
     public EditarLibro(JFrame parent, int libroId, String titulo, String autor, int anio, int stock) {
         super(parent, "📘 Editar libro", true);
         this.libroId = libroId;
 
+        //Configurar ventana
         setSize(500, 400);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
@@ -23,6 +27,7 @@ public class EditarLibro extends JDialog {
         panelTitulo.setBackground(new Color(0, 120, 215));
         panelTitulo.setBorder(new EmptyBorder(12, 20, 12, 20));
 
+        //Asignar fuente a titulo
         JLabel lblTitulo = new JLabel("📘 Editar libro");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Noto Color Emoji", Font.BOLD, 18));
@@ -102,12 +107,14 @@ public class EditarLibro extends JDialog {
         setVisible(true);
     }
 
+    //Crear etiquete de titulo
     private JLabel crearLabel(String texto, Font fuente) {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(fuente);
         return lbl;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Noto Color Emoji", Font.PLAIN, 14));
         boton.setBackground(new Color(0, 120, 215));
@@ -117,6 +124,7 @@ public class EditarLibro extends JDialog {
         boton.setBorder(new EmptyBorder(8, 20, 8, 20));
     }
 
+    //Redondear titulos
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -133,6 +141,7 @@ public class EditarLibro extends JDialog {
         return panel;
     }
 
+    //Metodo para actualizar los datos del libro en la BD
     private void actualizarLibro() {
         String titulo = campoTitulo.getText().trim();
         String autor = campoAutor.getText().trim();

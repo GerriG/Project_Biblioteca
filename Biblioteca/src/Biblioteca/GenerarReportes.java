@@ -9,9 +9,11 @@ import java.sql.*;
 
 public class GenerarReportes extends JFrame {
 
+    //Objetos de ventana
     private JTable tablaReportes;
     private DefaultTableModel modeloTabla;
 
+    //Configuracion de ventana
     public GenerarReportes() {
         setTitle("📊 Reportes de Biblioteca");
         setSize(950, 550);
@@ -31,7 +33,7 @@ public class GenerarReportes extends JFrame {
 
         // ----------------- Tabla con Reporte -----------------
         modeloTabla = new DefaultTableModel(new Object[]{
-                "Usuario", "Correo", "Libro", "Código Copia", "Prestado", "Devolución Programada", "Estado Devolución"
+            "Usuario", "Correo", "Libro", "Código Copia", "Prestado", "Devolución Programada", "Estado Devolución"
         }, 0);
 
         tablaReportes = new JTable(modeloTabla);
@@ -68,6 +70,7 @@ public class GenerarReportes extends JFrame {
         setVisible(true);
     }
 
+    //Titulo redondeado
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             @Override
@@ -85,21 +88,20 @@ public class GenerarReportes extends JFrame {
         return panel;
     }
 
+    //Cargar datos del reporte de prestamos
     private void cargarReportePrestamos() {
         modeloTabla.setRowCount(0);
-        String query =
-                "SELECT U.Nombre + ' ' + U.Apellido AS Usuario, U.Correo, " +
-                "L.Titulo, P.CodigoCopia, P.FechaHoraPrestamo, P.FechaDevolucion, " +
-                "D.FechaRealDevolucion " +
-                "FROM Prestamos P " +
-                "INNER JOIN Usuarios U ON P.UsuarioId = U.Id " +
-                "INNER JOIN Libros L ON P.LibroId = L.Id " +
-                "INNER JOIN Inventario I ON P.CodigoCopia = I.CodigoCopia " +
-                "LEFT JOIN Devoluciones D ON P.Id = D.PrestamoId";
+        String query
+                = "SELECT U.Nombre + ' ' + U.Apellido AS Usuario, U.Correo, "
+                + "L.Titulo, P.CodigoCopia, P.FechaHoraPrestamo, P.FechaDevolucion, "
+                + "D.FechaRealDevolucion "
+                + "FROM Prestamos P "
+                + "INNER JOIN Usuarios U ON P.UsuarioId = U.Id "
+                + "INNER JOIN Libros L ON P.LibroId = L.Id "
+                + "INNER JOIN Inventario I ON P.CodigoCopia = I.CodigoCopia "
+                + "LEFT JOIN Devoluciones D ON P.Id = D.PrestamoId";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Timestamp fechaPrestamo = rs.getTimestamp("FechaHoraPrestamo");
@@ -116,13 +118,13 @@ public class GenerarReportes extends JFrame {
                 }
 
                 modeloTabla.addRow(new Object[]{
-                        rs.getString("Usuario"),
-                        rs.getString("Correo"),
-                        rs.getString("Titulo"),
-                        rs.getString("CodigoCopia"),
-                        fechaPrestamo,
-                        fechaDevProgramada,
-                        estadoEntrega
+                    rs.getString("Usuario"),
+                    rs.getString("Correo"),
+                    rs.getString("Titulo"),
+                    rs.getString("CodigoCopia"),
+                    fechaPrestamo,
+                    fechaDevProgramada,
+                    estadoEntrega
                 });
             }
         } catch (SQLException e) {

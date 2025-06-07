@@ -8,6 +8,7 @@ import java.sql.*;
 
 public class MantenimientoPersonal extends JDialog {
 
+    //Objetos de ventana
     private JTextField txtNombre, txtApellido, txtNacionalidad, txtCorreo;
     private JPasswordField txtContrasenia;
     private JComboBox<String> comboRol;
@@ -15,12 +16,14 @@ public class MantenimientoPersonal extends JDialog {
     private Integer idUsuario;
     private boolean modoEliminar;
 
+    //Lista con las opciones de roles permitidos
     private final String[] rolesPermitidos = {"Administrador", "Secretario", "Bibliotecario"};
 
     public MantenimientoPersonal(JFrame parent, Integer id) {
         this(parent, id, false);
     }
 
+    //Configurar ventana y acciones
     public MantenimientoPersonal(JFrame parent, Integer id, boolean eliminar) {
         super(parent, true);
         this.idUsuario = id;
@@ -52,25 +55,48 @@ public class MantenimientoPersonal extends JDialog {
         comboRol = new JComboBox<>(rolesPermitidos);
 
         int fila = 0;
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Nombre:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtNombre, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Nombre:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtNombre, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Apellido:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtApellido, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Apellido:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtApellido, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Nacionalidad:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtNacionalidad, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Nacionalidad:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtNacionalidad, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Correo:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtCorreo, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Correo:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtCorreo, gbc);
+        fila++;
 
         if (idUsuario == null && !modoEliminar) {
-            gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Contraseña:"), gbc);
-            gbc.gridx = 1; panelCentro.add(txtContrasenia, gbc); fila++;
+            gbc.gridx = 0;
+            gbc.gridy = fila;
+            panelCentro.add(new JLabel("Contraseña:"), gbc);
+            gbc.gridx = 1;
+            panelCentro.add(txtContrasenia, gbc);
+            fila++;
         }
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Rol:"), gbc);
-        gbc.gridx = 1; panelCentro.add(comboRol, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Rol:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(comboRol, gbc);
 
         JPanel panelInferior = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.setBackground(new Color(135, 206, 235));
@@ -90,18 +116,25 @@ public class MantenimientoPersonal extends JDialog {
 
         if (idUsuario != null) {
             cargarDatos();
-            if (modoEliminar) deshabilitarCampos();
+            if (modoEliminar) {
+                deshabilitarCampos();
+            }
         }
 
         btnGuardar.addActionListener(e -> {
-            if (modoEliminar) eliminarUsuario();
-            else if (idUsuario == null) agregarUsuario();
-            else editarUsuario();
+            if (modoEliminar) {
+                eliminarUsuario();
+            } else if (idUsuario == null) {
+                agregarUsuario();
+            } else {
+                editarUsuario();
+            }
         });
 
         btnCancelar.addActionListener(e -> dispose());
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -118,6 +151,7 @@ public class MantenimientoPersonal extends JDialog {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -129,9 +163,9 @@ public class MantenimientoPersonal extends JDialog {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Cargar datos de la BD
     private void cargarDatos() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT Nombre, Apellido, Nacionalidad, Correo, RolId FROM Usuarios WHERE Id = ?")) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT Nombre, Apellido, Nacionalidad, Correo, RolId FROM Usuarios WHERE Id = ?")) {
             stmt.setInt(1, idUsuario);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -146,26 +180,31 @@ public class MantenimientoPersonal extends JDialog {
         }
     }
 
+    //Obtener el nombre de roles desde la tabla roles
     private String obtenerNombreRol(int rolId) throws SQLException {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT NombreRol FROM Roles WHERE Id = ?")) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT NombreRol FROM Roles WHERE Id = ?")) {
             stmt.setInt(1, rolId);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getString("NombreRol");
+            if (rs.next()) {
+                return rs.getString("NombreRol");
+            }
         }
         return "";
     }
 
+    //Obtener el ID del rol a utilizar.
     private int obtenerIdRol(String nombreRol) throws SQLException {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT Id FROM Roles WHERE NombreRol = ?")) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT Id FROM Roles WHERE NombreRol = ?")) {
             stmt.setString(1, nombreRol);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getInt("Id");
+            if (rs.next()) {
+                return rs.getInt("Id");
+            }
         }
         return -1;
     }
 
+    //Metodo para agregar un nuevo personal a la BD
     private void agregarUsuario() {
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
@@ -179,8 +218,7 @@ public class MantenimientoPersonal extends JDialog {
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO Usuarios (Nombre, Apellido, Nacionalidad, Sexo, Correo, Contrasenia, RolId) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("INSERT INTO Usuarios (Nombre, Apellido, Nacionalidad, Sexo, Correo, Contrasenia, RolId) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, nombre);
             stmt.setString(2, apellido);
             stmt.setString(3, nacionalidad);
@@ -196,6 +234,7 @@ public class MantenimientoPersonal extends JDialog {
         }
     }
 
+    //Metodo para editar los datos del personal
     private void editarUsuario() {
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
@@ -208,8 +247,7 @@ public class MantenimientoPersonal extends JDialog {
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("UPDATE Usuarios SET Nombre=?, Apellido=?, Nacionalidad=?, Correo=?, RolId=? WHERE Id=?")) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("UPDATE Usuarios SET Nombre=?, Apellido=?, Nacionalidad=?, Correo=?, RolId=? WHERE Id=?")) {
             stmt.setString(1, nombre);
             stmt.setString(2, apellido);
             stmt.setString(3, nacionalidad);
@@ -224,11 +262,13 @@ public class MantenimientoPersonal extends JDialog {
         }
     }
 
+    //Metodo para eliminar un usuario del personal de la BD
     private void eliminarUsuario() {
         int confirm = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas eliminar este usuario?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("DELETE FROM Usuarios WHERE Id=?")) {
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("DELETE FROM Usuarios WHERE Id=?")) {
             stmt.setInt(1, idUsuario);
             stmt.executeUpdate();
             mostrarMensaje("Usuario eliminado correctamente.");
@@ -238,6 +278,7 @@ public class MantenimientoPersonal extends JDialog {
         }
     }
 
+    //Deshabilitar campos que no son necesarios
     private void deshabilitarCampos() {
         txtNombre.setEnabled(false);
         txtApellido.setEnabled(false);
@@ -246,10 +287,12 @@ public class MantenimientoPersonal extends JDialog {
         comboRol.setEnabled(false);
     }
 
+    //Mostrar errores
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    //Mostrar mensajes
     private void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }

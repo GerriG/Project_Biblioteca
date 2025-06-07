@@ -7,12 +7,13 @@ import java.sql.SQLException;
 
 public class EliminarLibro {
 
+    //Metodo para eliminar el libro en la BD
     public static void eliminar(JFrame parent, int libroId) {
         int confirmacion = JOptionPane.showConfirmDialog(
-            parent,
-            "¿Estás seguro de que deseas eliminar este libro?",
-            "Confirmar eliminación",
-            JOptionPane.YES_NO_OPTION
+                parent,
+                "¿Estás seguro de que deseas eliminar este libro?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
         );
 
         if (confirmacion == JOptionPane.YES_OPTION) {

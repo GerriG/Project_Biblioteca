@@ -8,9 +8,9 @@ import java.util.*;
 import java.util.Date;
 import com.toedter.calendar.JDateChooser;
 
-
 public class MantenimientoInventario extends JDialog {
 
+    //Objetos de ventana
     private JTextField txtCodigo;
     private JComboBox<String> cmbEstado;
     private JComboBox<String> cmbLibros;
@@ -21,10 +21,12 @@ public class MantenimientoInventario extends JDialog {
     private String estadoActual = "";
     private Map<String, Integer> mapLibros = new HashMap<>();
 
+    //Metodo para ser clase hija de la ventana GestionarInventario
     public MantenimientoInventario(JFrame parent, Integer id) {
         this(parent, id, false);
     }
 
+    //Configurar acciones de ventana
     public MantenimientoInventario(JFrame parent, Integer id, boolean eliminar) {
         super(parent, true);
         this.idInventario = id;
@@ -51,6 +53,7 @@ public class MantenimientoInventario extends JDialog {
         construirFormulario(parent);
     }
 
+    //Crear formulario para mantenimiento
     private void construirFormulario(JFrame parent) {
         setTitle(idInventario == null ? "Agregar Inventario" : "Editar Inventario");
         setSize(500, 420);
@@ -80,17 +83,29 @@ public class MantenimientoInventario extends JDialog {
 
         cargarLibros();
 
-        gbc.gridx = 0; gbc.gridy = 0; panelCentro.add(new JLabel("Libro:"), gbc);
-        gbc.gridx = 1; panelCentro.add(cmbLibros, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panelCentro.add(new JLabel("Libro:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(cmbLibros, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1; panelCentro.add(new JLabel("Código de Copia:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtCodigo, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panelCentro.add(new JLabel("Código de Copia:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtCodigo, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 2; panelCentro.add(new JLabel("Estado:"), gbc);
-        gbc.gridx = 1; panelCentro.add(cmbEstado, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panelCentro.add(new JLabel("Estado:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(cmbEstado, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3; panelCentro.add(new JLabel("Fecha de Adquisición:"), gbc);
-        gbc.gridx = 1; panelCentro.add(dateFechaAdquisicion, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panelCentro.add(new JLabel("Fecha de Adquisición:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(dateFechaAdquisicion, gbc);
 
         JPanel panelInferior = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
         panelInferior.setBackground(new Color(135, 206, 235));
@@ -128,9 +143,9 @@ public class MantenimientoInventario extends JDialog {
         btnCancelar.addActionListener(e -> dispose());
     }
 
+    //Cargar libros de BD
     private void cargarLibros() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT id, titulo FROM Libros")) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT id, titulo FROM Libros")) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -143,6 +158,7 @@ public class MantenimientoInventario extends JDialog {
         }
     }
 
+    //Crear titulos redondeados
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -159,6 +175,7 @@ public class MantenimientoInventario extends JDialog {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -170,9 +187,9 @@ public class MantenimientoInventario extends JDialog {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Cargar datos de la BD mediante SP
     private void cargarDatos() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_ObtenerInventarioPorId(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_ObtenerInventarioPorId(?)}")) {
             stmt.setInt(1, idInventario);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -199,6 +216,7 @@ public class MantenimientoInventario extends JDialog {
         }
     }
 
+    //Cargar una nueva copia de libro al inventario
     private void agregarInventario() {
         String codigo = txtCodigo.getText().trim();
         String estado = (String) cmbEstado.getSelectedItem();
@@ -211,8 +229,7 @@ public class MantenimientoInventario extends JDialog {
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_InsertarInventario(?, ?, ?, ?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_InsertarInventario(?, ?, ?, ?)}")) {
             stmt.setInt(1, libroId);
             stmt.setString(2, codigo);
             stmt.setString(3, estado);
@@ -225,6 +242,7 @@ public class MantenimientoInventario extends JDialog {
         }
     }
 
+    //Editar un linro del inventario en la BD
     private void editarInventario() {
         String codigo = txtCodigo.getText().trim();
         String estado = (String) cmbEstado.getSelectedItem();
@@ -237,8 +255,7 @@ public class MantenimientoInventario extends JDialog {
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_ActualizarInventario(?, ?, ?, ?, ?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_ActualizarInventario(?, ?, ?, ?, ?)}")) {
             stmt.setInt(1, idInventario);
             stmt.setInt(2, libroId);
             stmt.setString(3, codigo);
@@ -252,9 +269,9 @@ public class MantenimientoInventario extends JDialog {
         }
     }
 
+    //Eliminar una copia de libro de inventario en la BD
     private void eliminarInventario() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_EliminarInventario(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_EliminarInventario(?)}")) {
             stmt.setInt(1, idInventario);
             stmt.executeUpdate();
             mostrarMensaje("Copia eliminada correctamente.");
@@ -263,10 +280,12 @@ public class MantenimientoInventario extends JDialog {
         }
     }
 
+    //Mostrar errores
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    //Mostrar mensajes
     private void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }

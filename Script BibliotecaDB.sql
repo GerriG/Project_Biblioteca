@@ -46,7 +46,6 @@ VALUES
     ('Jorge', 'Gómez', 'Argentino', 'Masculino', 'jorge.gomez@correo.com', 'pass4', 4); --Bibliotecario (Posiblemente se descarte)
 GO
 
-
 -- Tabla Libros
 CREATE TABLE Libros (
     id INT IDENTITY(1,1) PRIMARY KEY,
@@ -155,14 +154,58 @@ VALUES
     (5, 'LIB005-A', 2);
 	Go
 
+	-- Trigger calcular multas
+CREATE TRIGGER TR_CrearMulta_Devolucion
+ON Devoluciones
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @IdPrestamo INT, @FechaEntrega DATE, @FechaDevolucion DATE, @IdUsuario INT;
+    DECLARE @DiasRetraso INT, @Monto DECIMAL(10,2);
+
+    SELECT 
+        @IdPrestamo = i.PrestamoId,
+        @FechaEntrega = i.FechaRealDevolucion
+    FROM INSERTED i;
+
+    SELECT 
+        @FechaDevolucion = p.FechaDevolucion,
+        @IdUsuario = p.UsuarioId
+    FROM Prestamos p
+    WHERE p.Id = @IdPrestamo;
+
+    IF @FechaEntrega > @FechaDevolucion
+    BEGIN
+        SET @DiasRetraso = DATEDIFF(DAY, @FechaDevolucion, @FechaEntrega);
+
+        -- Escalado de multas
+        IF @DiasRetraso = 1
+            SET @Monto = 0.50;
+        ELSE IF @DiasRetraso BETWEEN 2 AND 3
+            SET @Monto = 1.50;
+        ELSE IF @DiasRetraso BETWEEN 4 AND 5
+            SET @Monto = 3.00;
+        ELSE IF @DiasRetraso BETWEEN 6 AND 7
+            SET @Monto = 5.00;
+        ELSE
+            SET @Monto = 5.00 + (@DiasRetraso - 7) * 1.00;
+
+        -- Insertar multa
+        INSERT INTO Multas (IdPrestamo, IdUsuario, DiasRetraso, Monto)
+        VALUES (@IdPrestamo, @IdUsuario, @DiasRetraso, @Monto);
+    END
+END;
+
 -- Insert Devoluciones
 INSERT INTO Devoluciones (PrestamoId, FechaRealDevolucion)
 VALUES 
-    (1, '2025-05-01'),
-    (2, '2025-05-01'),
-    (3, '2025-05-15'),
-    (4, '2025-05-01'),
-    (8, '2025-06-20');
+    (1, '01-05-2025'),
+    (2, '01-05-2025'),
+    (3, '15-05-2025'),
+    (4, '01-05-2025'),
+    (5, '20-06-2025');
 	Go
 	
 --SP Insertar Usuario
@@ -376,9 +419,6 @@ BEGIN
     WHERE l.disponible = 1 AND l.stock > 0;
 END;
 GO
-exec sp_LibrosDisponibles
-
-select * from Libros
 
 --SP Copias disponibles de libros
 CREATE PROCEDURE sp_CopiasDisponiblesPorLibro
@@ -537,48 +577,4 @@ BEGIN
     UPDATE Prestamos
     SET FechaDevolucion = DATEADD(week, 2, FechaHoraPrestamo)
     WHERE Id IN (SELECT Id FROM inserted);
-END;
-
--- Trigger calcular multas
-CREATE TRIGGER TR_CrearMulta_Devolucion
-ON Devoluciones
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    DECLARE @IdPrestamo INT, @FechaEntrega DATE, @FechaDevolucion DATE, @IdUsuario INT;
-    DECLARE @DiasRetraso INT, @Monto DECIMAL(10,2);
-
-    SELECT 
-        @IdPrestamo = i.PrestamoId,
-        @FechaEntrega = i.FechaRealDevolucion
-    FROM INSERTED i;
-
-    SELECT 
-        @FechaDevolucion = p.FechaDevolucion,
-        @IdUsuario = p.UsuarioId
-    FROM Prestamos p
-    WHERE p.Id = @IdPrestamo;
-
-    IF @FechaEntrega > @FechaDevolucion
-    BEGIN
-        SET @DiasRetraso = DATEDIFF(DAY, @FechaDevolucion, @FechaEntrega);
-
-        -- Escalado de multas
-        IF @DiasRetraso = 1
-            SET @Monto = 0.50;
-        ELSE IF @DiasRetraso BETWEEN 2 AND 3
-            SET @Monto = 1.50;
-        ELSE IF @DiasRetraso BETWEEN 4 AND 5
-            SET @Monto = 3.00;
-        ELSE IF @DiasRetraso BETWEEN 6 AND 7
-            SET @Monto = 5.00;
-        ELSE
-            SET @Monto = 5.00 + (@DiasRetraso - 7) * 1.00;
-
-        -- Insertar multa
-        INSERT INTO Multas (IdPrestamo, IdUsuario, DiasRetraso, Monto)
-        VALUES (@IdPrestamo, @IdUsuario, @DiasRetraso, @Monto);
-    END
 END;

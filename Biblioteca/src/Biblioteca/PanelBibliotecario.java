@@ -8,6 +8,7 @@ import java.sql.*;
 // Clase para panel con esquinas redondeadas y fondo semi-transparente
 class RoundedPanel extends JPanel {
 
+    //Configurar ventana y color
     private Color backgroundColor;
     private int cornerRadius = 30;
 
@@ -34,11 +35,13 @@ class RoundedPanel extends JPanel {
 
 public class PanelBibliotecario extends JFrame {
 
+    //Crear objetos de ventana
     private JLabel lblAvatar, lblNombre, lblDatos;
     private JButton btnGestionarInventario, btnVolverLogin;
     private String correoUsuario;
     private Image fondo;
 
+    //Asignar imagen de fondo a la ventana de Bibliotecario
     public PanelBibliotecario(String correoUsuario) {
         this.correoUsuario = correoUsuario;
         fondo = new ImageIcon(getClass().getResource("/Biblioteca/Wallpaper/Fondo.jpg")).getImage();
@@ -46,12 +49,15 @@ public class PanelBibliotecario extends JFrame {
         cargarDatosBibliotecario(correoUsuario);
     }
 
+    //Cargar UI
     private void initUI() {
+        //Configuracion de ventana
         setTitle("Panel de Bibliotecario");
         setSize(527, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        //Configurar layout
         JPanel panelPrincipal = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -67,6 +73,7 @@ public class PanelBibliotecario extends JFrame {
         panelContenido.setBorder(new EmptyBorder(35, 35, 35, 35));
         panelContenido.setOpaque(false);
 
+        //Crear y configurar objetos
         lblAvatar = new JLabel();
         lblAvatar.setHorizontalAlignment(SwingConstants.CENTER);
         lblAvatar.setPreferredSize(new Dimension(158, 175));
@@ -108,6 +115,7 @@ public class PanelBibliotecario extends JFrame {
         setContentPane(panelPrincipal);
     }
 
+    //Cargar datos del bibliotecario que ha ingresado
     private void cargarDatosBibliotecario(String correo) {
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(
                 "SELECT Nombre, Apellido, Nacionalidad, Sexo, R.NombreRol FROM Usuarios U INNER JOIN Roles R ON U.RolID = R.ID WHERE U.Correo = ?")) {
@@ -141,6 +149,7 @@ public class PanelBibliotecario extends JFrame {
         }
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 15));
         boton.setFocusPainted(false);

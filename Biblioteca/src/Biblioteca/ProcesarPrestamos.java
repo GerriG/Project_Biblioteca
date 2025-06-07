@@ -6,6 +6,8 @@ import java.awt.*;
 import java.sql.*;
 
 public class ProcesarPrestamos extends JDialog {
+
+    //Objetos de ventana
     private JComboBox<String> comboLibros;
     private JComboBox<String> comboCopias;
     private JComboBox<String> comboUsuarios;
@@ -13,10 +15,13 @@ public class ProcesarPrestamos extends JDialog {
     private int prestamoId = -1;
     private String modo;
 
+    //Configurar ventana y botones
     public ProcesarPrestamos(JFrame parent, Integer id, String modo) {
         super(parent, true);
         this.modo = modo;
-        if (id != null) this.prestamoId = id;
+        if (id != null) {
+            this.prestamoId = id;
+        }
 
         setTitle(modo.equals("nuevo") ? "Nuevo Préstamo" : modo.equals("editar") ? "Editar Préstamo" : "Procesar Devolución");
         setSize(500, 320);
@@ -25,7 +30,7 @@ public class ProcesarPrestamos extends JDialog {
         setLayout(new BorderLayout());
 
         // Panel superior (azul)
-        JPanel panelTitulo = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));        
+        JPanel panelTitulo = crearPanelRedondeado(new FlowLayout(FlowLayout.LEFT));
         panelTitulo.setBackground(new Color(0, 120, 215));
         panelTitulo.setBorder(new EmptyBorder(12, 20, 12, 20));
 
@@ -73,7 +78,7 @@ public class ProcesarPrestamos extends JDialog {
         add(panelCampos, BorderLayout.CENTER);
 
         // Panel inferior con botones
-        JPanel panelBotones = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));        
+        JPanel panelBotones = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
         panelBotones.setBackground(new Color(135, 206, 235));
 
         btnGuardar = new JButton(modo.equals("devolver") ? "📥 Devolver" : "💾 Guardar");
@@ -101,21 +106,26 @@ public class ProcesarPrestamos extends JDialog {
 
         btnGuardar.addActionListener(e -> {
             switch (modo) {
-                case "nuevo" -> insertarPrestamo();
-                case "editar" -> actualizarPrestamo();
-                case "devolver" -> procesarDevolucion();
+                case "nuevo" ->
+                    insertarPrestamo();
+                case "editar" ->
+                    actualizarPrestamo();
+                case "devolver" ->
+                    procesarDevolucion();
             }
         });
 
         setVisible(true);
     }
 
+    //Crear etiquetas
     private JLabel crearLabel(String texto, Font fuente) {
         JLabel lbl = new JLabel(texto);
         lbl.setFont(fuente);
         return lbl;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Noto Color Emoji", Font.PLAIN, 14));
         boton.setBackground(new Color(0, 120, 215));
@@ -125,6 +135,7 @@ public class ProcesarPrestamos extends JDialog {
         boton.setBorder(new EmptyBorder(8, 20, 8, 20));
     }
 
+    //Cargar datos desde la BD
     private void cargarDatos() {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement psLibros = conn.prepareStatement("SELECT id, titulo FROM Libros WHERE disponible = 1");
@@ -149,6 +160,7 @@ public class ProcesarPrestamos extends JDialog {
         }
     }
 
+    //Cargar prestamos
     private void cargarPrestamo(int id) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement ps = conn.prepareStatement("SELECT LibroId, CodigoCopia, UsuarioId FROM Prestamos WHERE Id = ?");
@@ -164,6 +176,7 @@ public class ProcesarPrestamos extends JDialog {
         }
     }
 
+    //Insertar prestamos
     private void insertarPrestamo() {
         try (Connection conn = DatabaseConnection.getConnection()) {
             CallableStatement cs = conn.prepareCall("{call sp_InsertarPrestamo(?, ?, ?)}");
@@ -178,6 +191,7 @@ public class ProcesarPrestamos extends JDialog {
         }
     }
 
+    //Actualizar prestamos en la BD
     private void actualizarPrestamo() {
         try (Connection conn = DatabaseConnection.getConnection()) {
             CallableStatement cs = conn.prepareCall("{call sp_ActualizarPrestamo(?, ?, ?, ?)}");
@@ -193,6 +207,7 @@ public class ProcesarPrestamos extends JDialog {
         }
     }
 
+    //Procesar devoluciones de libros
     private void procesarDevolucion() {
         try (Connection conn = DatabaseConnection.getConnection()) {
             CallableStatement cs = conn.prepareCall("{call sp_ProcesarDevolucion(?)}");
@@ -205,11 +220,13 @@ public class ProcesarPrestamos extends JDialog {
         }
     }
 
+    //Obtener el ID del prestamo seleccionado
     private int obtenerIdSeleccionado(JComboBox<String> combo) {
         String seleccionado = (String) combo.getSelectedItem();
         return Integer.parseInt(seleccionado.split(" - ")[0]);
     }
 
+    //Seleccionar por ID
     private void seleccionarItemPorId(JComboBox<String> combo, int id) {
         for (int i = 0; i < combo.getItemCount(); i++) {
             if (combo.getItemAt(i).startsWith(id + " -")) {
@@ -227,7 +244,7 @@ public class ProcesarPrestamos extends JDialog {
             }
         }
     }
-    
+
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {

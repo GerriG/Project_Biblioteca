@@ -6,11 +6,13 @@ import java.awt.*;
 
 public class MantenimientoPrestamos extends JPanel {
 
+    //Configurar ventana
     public MantenimientoPrestamos() {
         setLayout(new FlowLayout(FlowLayout.RIGHT));
         setBackground(Color.WHITE);
         setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        //Crear botones
         JButton btnNuevo = new JButton("➕ Nuevo Préstamo");
         JButton btnEditar = new JButton("✏️ Editar");
         JButton btnDevolver = new JButton("📥 Devolución");
@@ -23,12 +25,13 @@ public class MantenimientoPrestamos extends JPanel {
         add(btnEditar);
         add(btnDevolver);
 
-        // Aquí conectarías cada botón con sus respectivas acciones o ventanas
+        // Asignar acciones a botones
         btnNuevo.addActionListener(e -> JOptionPane.showMessageDialog(this, "Procesar nuevo préstamo"));
         btnEditar.addActionListener(e -> JOptionPane.showMessageDialog(this, "Editar préstamo existente"));
         btnDevolver.addActionListener(e -> JOptionPane.showMessageDialog(this, "Procesar devolución de libro"));
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);

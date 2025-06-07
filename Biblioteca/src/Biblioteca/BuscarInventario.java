@@ -4,6 +4,8 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 
 public class BuscarInventario {
+
+    //Parametros para realizar busqueda de libros en inventario
     public static void buscar(String filtro, DefaultTableModel model) {
         try (Connection conn = Biblioteca.DatabaseConnection.getConnection()) {
             String sql = "{CALL sp_BuscarInventario(?)}";

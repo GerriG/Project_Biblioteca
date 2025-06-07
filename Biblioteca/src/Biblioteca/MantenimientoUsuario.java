@@ -8,6 +8,7 @@ import java.sql.*;
 
 public class MantenimientoUsuario extends JDialog {
 
+    //Objetos de ventana
     private JTextField txtNombre, txtApellido, txtNacionalidad, txtCorreo;
     private JPasswordField txtContrasenia;
     private JComboBox<String> cmbSexo;
@@ -19,7 +20,8 @@ public class MantenimientoUsuario extends JDialog {
     public MantenimientoUsuario(JFrame parent, Integer id) {
         this(parent, id, false);
     }
-
+    
+    //Configurar objetos de ventana
     public MantenimientoUsuario(JFrame parent, Integer id, boolean eliminar) {
         super(parent, true);
         this.idUsuario = id;
@@ -42,6 +44,7 @@ public class MantenimientoUsuario extends JDialog {
         construirFormulario(parent);
     }
 
+    //Construir el formulario para administrar usuarios
     private void construirFormulario(JFrame parent) {
         setTitle(idUsuario == null ? "Agregar Usuario" : "Editar Usuario");
         setSize(500, 460);
@@ -70,24 +73,48 @@ public class MantenimientoUsuario extends JDialog {
         txtContrasenia = new JPasswordField(25);
 
         int fila = 0;
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Nombre:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtNombre, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Nombre:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtNombre, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Apellido:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtApellido, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Apellido:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtApellido, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Nacionalidad:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtNacionalidad, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Nacionalidad:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtNacionalidad, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Sexo:"), gbc);
-        gbc.gridx = 1; panelCentro.add(cmbSexo, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Sexo:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(cmbSexo, gbc);
+        fila++;
 
-        gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Correo:"), gbc);
-        gbc.gridx = 1; panelCentro.add(txtCorreo, gbc); fila++;
+        gbc.gridx = 0;
+        gbc.gridy = fila;
+        panelCentro.add(new JLabel("Correo:"), gbc);
+        gbc.gridx = 1;
+        panelCentro.add(txtCorreo, gbc);
+        fila++;
 
         if (idUsuario == null) {
-            gbc.gridx = 0; gbc.gridy = fila; panelCentro.add(new JLabel("Contraseña:"), gbc);
-            gbc.gridx = 1; panelCentro.add(txtContrasenia, gbc); fila++;
+            gbc.gridx = 0;
+            gbc.gridy = fila;
+            panelCentro.add(new JLabel("Contraseña:"), gbc);
+            gbc.gridx = 1;
+            panelCentro.add(txtContrasenia, gbc);
+            fila++;
         }
 
         JPanel panelInferior = crearPanelRedondeado(new FlowLayout(FlowLayout.RIGHT));
@@ -121,6 +148,7 @@ public class MantenimientoUsuario extends JDialog {
         btnCancelar.addActionListener(e -> dispose());
     }
 
+    //Titulo redondeado
     private JPanel crearPanelRedondeado(LayoutManager layout) {
         JPanel panel = new JPanel(layout) {
             protected void paintComponent(Graphics g) {
@@ -137,6 +165,7 @@ public class MantenimientoUsuario extends JDialog {
         return panel;
     }
 
+    //Formatear botones
     private void estiloBoton(JButton boton) {
         boton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 13));
         boton.setFocusPainted(false);
@@ -148,9 +177,9 @@ public class MantenimientoUsuario extends JDialog {
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
+    //Cargar datos mediante SP
     private void cargarDatos() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_ObtenerUsuarioPorId(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_ObtenerUsuarioPorId(?)}")) {
             stmt.setInt(1, idUsuario);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -171,6 +200,7 @@ public class MantenimientoUsuario extends JDialog {
         }
     }
 
+    //Agregar un nuevo usuario
     private void agregarUsuario() {
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
@@ -184,8 +214,7 @@ public class MantenimientoUsuario extends JDialog {
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_InsertarUsuario(?, ?, ?, ?, ?, ?, ?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_InsertarUsuario(?, ?, ?, ?, ?, ?, ?)}")) {
             stmt.setString(1, nombre);
             stmt.setString(2, apellido);
             stmt.setString(3, nacionalidad);
@@ -201,6 +230,7 @@ public class MantenimientoUsuario extends JDialog {
         }
     }
 
+    //Editar los datos del usuario
     private void editarUsuario() {
         String nombre = txtNombre.getText().trim();
         String apellido = txtApellido.getText().trim();
@@ -212,8 +242,7 @@ public class MantenimientoUsuario extends JDialog {
             return;
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_ActualizarUsuario(?, ?, ?, ?, ?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_ActualizarUsuario(?, ?, ?, ?, ?)}")) {
             stmt.setInt(1, idUsuario);
             stmt.setString(2, nombre);
             stmt.setString(3, apellido);
@@ -227,9 +256,9 @@ public class MantenimientoUsuario extends JDialog {
         }
     }
 
+    //Eliminar Usuario
     private void eliminarUsuario() {
-        try (Connection conn = DatabaseConnection.getConnection();
-             CallableStatement stmt = conn.prepareCall("{call sp_EliminarUsuario(?)}")) {
+        try (Connection conn = DatabaseConnection.getConnection(); CallableStatement stmt = conn.prepareCall("{call sp_EliminarUsuario(?)}")) {
             stmt.setInt(1, idUsuario);
             stmt.executeUpdate();
             mostrarMensaje("Usuario eliminado correctamente.");
@@ -238,10 +267,12 @@ public class MantenimientoUsuario extends JDialog {
         }
     }
 
+    //Mostrar mensajes de error
     private void mostrarError(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    //Mostrar mensajes
     private void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }
